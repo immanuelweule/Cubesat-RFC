@@ -3,7 +3,6 @@
 <ins>To do:</ins>
 
 Adrian:
-- buttons to download Log files
 - command line without refresh
 - Safe Init to SPIFFS
 
@@ -13,6 +12,7 @@ Immi:
 - pack command line
 
 Not so important:
+- buttons to download Log files
 - XML to show lastCommand and lastInit (or split Js, HTML, CSS and use processor)
 - Module setter for request frequency (in sec)
 - next to command line choose module configuration (easier command handling)
