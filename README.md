@@ -19,7 +19,7 @@ Not so important:
 - PinIn to show workload on website (On/Off time of a high/low Pin)
 - Turn On/Off modules in GPIO tab
 
-Done:
+<ins>Done:</ins>
 - Log files for sensordata with timestamp
 - Login
 - Website working with AsynchronServer
