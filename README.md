@@ -1,16 +1,23 @@
 # RFC
 
 To do:
+
+Adrian:
 - buttons to download Log files
 - command line without refresh
 - Safe Init to SPIFFS
-- XML to show lastCommand and lastInit (or split Js, HTML, CSS and use processor)
-- function to solve and safe SPI package (Werte Variabilität durch interrupt code)
 
-- PinIn für Auslastung der CPU (regelmäßige Abfrage eines Pins) On/Off Zeit
-- Switchbuttons for other modules (on/off PS lines)
-- unter Command line auswählen welches Modul
-- Module steuern wie viele Sekunden pro Abfrage (in C)
+Immi:
+- function to solve and safe SPI package
+- pack safed Init
+- pack command line
+
+not so important:
+- XML to show lastCommand and lastInit (or split Js, HTML, CSS and use processor)
+- Module setter for request frequency (in sec)
+- next to command line choose module configuration (easier command handling)
+- PinIn to show workload on website (On/Off time of a high/low Pin)
+- Turn On/Off modules in GPIO tab
 
 Done:
 - Log files for sensordata with timestamp
@@ -21,3 +28,5 @@ Done:
 - Graphs for sensordata
 - Added dokumentation
 - Added links for later research
+- Fix IP Adress (cubesat.local/)
+- Batch file for easier use
