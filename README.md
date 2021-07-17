@@ -3,8 +3,8 @@
 <ins>To do:</ins>
 
 Adrian:
-- command line without refresh
 - Safe Init to SPIFFS
+- Split files in Js, HTML, CSS
 
 Immi:
 - function to solve and safe SPI package
@@ -13,7 +13,6 @@ Immi:
 
 Not so important:
 - buttons to download Log files
-- XML to show lastCommand and lastInit (or split Js, HTML, CSS and use processor)
 - Module setter for request frequency (in sec)
 - next to command line choose module configuration (easier command handling)
 - PinIn to show workload on website (On/Off time of a high/low Pin)
@@ -30,3 +29,5 @@ Not so important:
 - Added links for later research
 - Fix IP Adress (cubesat.local/)
 - Batch file for easier use
+- command line without refresh
+- XML to show lastCommand and lastInit
