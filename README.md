@@ -12,7 +12,7 @@ Immi:
 - pack safed Init
 - pack command line
 
-not so important:
+Not so important:
 - XML to show lastCommand and lastInit (or split Js, HTML, CSS and use processor)
 - Module setter for request frequency (in sec)
 - next to command line choose module configuration (easier command handling)
