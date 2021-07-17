@@ -255,11 +255,10 @@ void setup(void){
   });
   
   server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
-    if(!request->authenticate(http_username, http_password))
       return request->requestAuthentication();
     request->send_P(200, "text/plain", readBMP280Temperature().c_str());
   });
-  server.on("/altitude", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/altitude", HTTP_GET, [](AsyncWebServerRequest *request){®
     if(!request->authenticate(http_username, http_password))
       return request->requestAuthentication();
     request->send_P(200, "text/plain", readBMP280Altitude().c_str());
@@ -272,7 +271,7 @@ void setup(void){
   server.on("/command", HTTP_GET, [](AsyncWebServerRequest *request){
     if(!request->authenticate(http_username, http_password))
       return request->requestAuthentication();
-    request->send(SPIFFS, "/inCommand.txt", "text/plain");
+    request->send(SPIFFS, "/inCommand.txt", "text/text");
   });
   /* server.on("/photo", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", readPhoto().c_str());
