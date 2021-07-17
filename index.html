@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html charset="UTF-8">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> html {display: inline-block;margin: 0px auto;text-align: center;}
+
+    input {
+      text-align: center;
+    }
+
+    input[type=text]{ 
+      text-align: left; 
+      width: 60%;
+    }
+
+    .chart1,
+    .chart2 {
+      width: 50%;
+      border: thin solid darkgray;
+      padding: 20px;
+    }
+    }
+
+        
+  </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/superhero/bootstrap.min.css" rel="stylesheet" title="main">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+      
+  </head>
+  <body>
+    <div class="container-fluid">
+      <h1>Satellite Ground Control</h1>
+      <br>
+      <ul class="nav nav-tabs" id="tab">
+        <li class="active"><a href="#tab_comm" data-toggle="tab">Communication</a></li>
+        <li><a href="#tab_measures" data-toggle="tab">Measurements</a></li>
+        <li><a href="#tab_graphs" data-toggle="tab">Graphics</a></li>
+        <li><a href="#tab_gpio" data-toggle="tab">GPIO  </a></li>
+        <li><a href="#tab_initialization" data-toggle="tab">Initialization</a></li>
+        <li><a href="#tab_configuration" data-toggle="tab">UI-Settings</a></li>
+      </ul>
+
+      <div class="tab-content">
+
+        <div class="tab-pane fade in active" id="tab_comm">
+          <h2>Communication Interface</h2>
+          <br>
+          <form action="/get" target="hidden-form" name="commandForm">
+            <h4>(last send  command: <strong><span id="lastCommand">NaN</span></strong>)</h4>
+            <br>
+            Command : <input type="text" name="inCommand" id=commandReset>
+            <input type="submit" value="Submit" onclick="submitMessage()">
+            <br>
+          </form>
+          <br><br>
+          <p><strong>Use this format to send commands to a specific module: XY{command} </strong></p>
+          <h4>Current configuration:</h4>
+          <br>
+          <div style="width:50%;margin-left:auto;margin-right:auto;text-align: center;">
+            <table data-toggle="table" data-show-colunns="true">
+              <colgroup>
+                <col span="1" style="width: 30%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 20%;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">Modul</th>
+                  <th class="text-center">ComEn line (X)</th>
+                  <th class="text-center">PS line (Y)</th>
+                  <th class="text-center">API</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ODC</td>
+                  <td><span id="">-1</span></td>
+                  <td><span id="">-1</span></td>
+                  <td><span id="">-</span></td>
+                </tr>
+                <tr>
+                  <td>EPM</td>
+                  <td><span id="">-1</span></td>
+                  <td><span id="">-1</span></td>
+                  <td><span id="">-</span></td>
+                </tr>
+                <tr>
+                  <td>TMS</td>
+                  <td><span id="">-1</span></td>
+                  <td><span id="">-1</span></td>
+                  <td><span id="">-</span></td>
+                </tr>
+                <tr>
+                  <td>PAY</td>
+                  <td><span id="">-1</span></td>
+                  <td><span id="">-1</span></td>
+                  <td><span id="">-</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>  
+
+        <div class="tab-pane fade" id="tab_measures">       
+          <h2>Data stream</h2>
+          <br>
+          <div class="tables" style="width:90%;margin-left:auto;margin-right:auto;text-align: center;">
+            <table id="tab_measures" data-toggle="table" data-show-colunns="true">
+              <colgroup>
+                 <col span="1" style="width: 30%;">
+                 <col span="1" style="width: 30%;">
+                 <col span="1" style="width: 10%;">
+                 <col span="1" style="width: 30%;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">ODC</th>
+                  <th class="text-center">Value</th>
+                  <th class="text-center">Unit</th>
+                  <th class="text-center">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Thermal</td>
+                  <td><span id="Temp">0</span></td>
+                  <td>Celsius</td>
+                  <td><span id="Time1">00:00</span></td>
+                <tr>
+                </tr>
+                  <td>Altitude</td>
+                  <td><span id="Altitude">0</span></td>
+                  <td>meters</td>
+                  <td><span id="Time2">00:00</span></td>
+                </tr>
+              </tbody>
+              </table>
+            <br>
+              <table id="tab_measures" data-toggle="table" data-show-colunns="true">
+              <colgroup>
+                 <col span="1" style="width: 30%;">
+                 <col span="1" style="width: 30%;">
+                 <col span="1" style="width: 10%;">
+                 <col span="1" style="width: 30%;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">EPM</th>
+                  <th class="text-center">Value</th>
+                  <th class="text-center">Unit</th>
+                  <th class="text-center">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody >
+                <tr>
+                  <td>Pressure</td>
+                  <td><span id="Pressure">0</span></td>
+                  <td>hPa</td>
+                  <td><span id="Time3">00:00</span></td>
+                <tr>
+                </tr>
+                  <td>Photodiode</td>
+                  <td><span id="Photo">0</span></td>
+                  <td>Lumen</td>
+                  <td><span id="Time4">00:00</span></td>
+                </tr>
+              </tbody>
+              </table>
+              <br>
+              <table id="tab_measures" data-toggle="table" data-show-colunns="true">
+              <colgroup>
+                 <col span="1" style="width: 30%;">
+                 <col span="1" style="width: 30%;">
+                 <col span="1" style="width: 10%;">
+                 <col span="1" style="width: 30%;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">PAY</th>
+                  <th class="text-center">Value</th>
+                  <th class="text-center">Unit</th>
+                  <th class="text-center">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Modul1 </td>
+                  <td></td>
+                  <td></td>
+                  <td>00:00</td>
+                </tr>
+                <tr>
+                  <td>Modul2</td>
+                  <td></td>
+                  <td></td>
+                  <td>00:00</td>
+                </tr>
+              </tbody>
+              </table>
+            <br>
+              <table id="tab_measures" data-toggle="table" data-show-colunns="true">
+              <colgroup>
+                 <col span="1" style="width: 30%;">
+                 <col span="1" style="width: 30%;">
+                 <col span="1" style="width: 10%;">
+                 <col span="1" style="width: 30%;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">TMS</th>
+                  <th class="text-center">Value</th>
+                  <th class="text-center">Unit</th>
+                  <th class="text-center">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Modul1</td>
+                  <td></td>
+                  <td></td>
+                  <td>00:00</td>
+                </tr>
+                <tr>
+                  <td>Modul2</td>
+                  <td></td>
+                  <td></td>
+                  <td>00:00</td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab_graphs">
+          <h2>Graphs</h2>
+          <br>
+          <div class="container" style="display:flex; width:70%">
+            <div class="chart1" id="chart-temperature" class="container"></div>
+            <div class="chart2" id="chart-altitude" class="container"></div>
+          </div>
+          <div class="container" style="display:flex; width:70%">
+            <div class="chart1" id="chart-pressure" class="container"></div>
+            <div class="chart2" id="chart-photo" class="container"></div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab_gpio">
+          <h2>GPIO</h2>
+          <br>
+          <div style="width:60%;margin-left:auto;margin-right:auto;text-align: center;">
+            <div class="row">
+              <div class="col-xs-6 col-md-4">
+                <h4 class="text-left">ODC
+                  <div class="span badge" id="D5_etat">OFF</div>
+                </h4>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="button btn btn-success btn-lg" id="D5_On" type="button">ON</div>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="button btn btn-danger btn-lg" id="D5_Off" type="button">OFF</div>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <h4 class="text-left">EPM
+                  <div class="span badge" id="D6_etat">OFF</div>
+                </h4>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="button btn btn-success btn-lg" id="D6_On" type="button">ON</div>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="button btn btn-danger btn-lg" id="D6_Off" type="button">OFF</div>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <h4 class="text-left">TMS
+                  <div class="span badge" id="D7_etat">OFF</div>
+                </h4>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="button btn btn-success btn-lg" id="D7_On" type="button">ON</div>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="button btn btn-danger btn-lg" id="D7_Off" type="button">OFF</div>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <h4 class="text-left">PAY
+                  <div class="span badge" id="D8_etat">OFF</div>
+                </h4>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="button btn btn-success btn-lg" id="D8_On" type="button">ON</div>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="button btn btn-danger btn-lg" id="D8_Off" type="button">OFF</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab_initialization">
+          <h2>Initialization</h2>
+          <br>
+          <h4>Current configuration:</h4>
+          <br>
+          <div style="width:80%;margin-left:auto;margin-right:auto;text-align: center;">
+            <div style="width:60%;margin-left:auto;margin-right:auto;text-align: center;">
+              <table id="tab_initialization" data-toggle="table" data-show-colunns="true">
+                <colgroup>
+                  <col span="1" style="width: 30%;">
+                  <col span="1" style="width: 20%;">
+                  <col span="1" style="width: 20%;">
+                  <col span="1" style="width: 20%;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th class="text-center">Modul</th>
+                    <th class="text-center">ComEn line (X)</th>
+                    <th class="text-center">PS line (Y)</th>
+                    <th class="text-center">API</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>ODC</td>
+                    <td><span id="">-1</span></td>
+                    <td><span id="">-1</span></td>
+                    <td><span id="">-</span></td>
+                  </tr>
+                  <tr>
+                    <td>EPM</td>
+                    <td><span id="">-1</span></td>
+                    <td><span id="">-1</span></td>
+                    <td><span id="">-</span></td>
+                  </tr>
+                  <tr>
+                    <td>TMS</td>
+                    <td><span id="">-1</span></td>
+                    <td><span id="">-1</span></td>
+                    <td><span id="">-</span></td>
+                  </tr>
+                  <tr>
+                    <td>PAY</td>
+                    <td><span id="">-1</span></td>
+                    <td><span id="">-1</span></td>
+                    <td><span id="">-</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br><br>
+            <p><strong>Use the initilization table to send the present hardware configuration so that ground control communication will work properly.</strong></p>
+            <br>
+            <form name="initForm" action="/get" target="hidden-form">
+              <table id="tab_initialization" data-toggle="table" data-show-colunns="true">
+                <colgroup>
+                    <col span="1" style="width:24%" >
+                    <col span="1" style="width:16%">
+                    <col span="1" style="width:16%">
+                    <col span="1" style="width:11%">
+                    <col span="1" style="width:11%">
+                    <col span="1" style="width:11%">
+                    <col span="1" style="width:11%">
+                </colgroup>
+                <tr>
+                  <th></th>
+                  <th class="text-center">ComEn line</th> 
+                  <th class="text-center">PS line</th>
+                  <th class="text-center">SR</th>
+                  <th class="text-center">AI</th>
+                  <th class="text-center">SPI</th>
+                  <th class="text-center">I2C</th>
+                </tr>
+                <tr>
+                  <td>EPM</td>
+                  <td><input type="number" id="epm" min="1" max="9" name="epm"></td>
+                  <td><input type="number" id="epm" min="1" max="9" name="epm"></td>
+                  <td><input type="radio" id="epm" name="epm" value="0"></td>
+                  <td><input type="radio" id="epm" name="epm" value="0"></td>
+                  <td><input type="radio" id="epm" name="epm" value="0"></td>
+                  <td><input type="radio" id="epm" name="epm" value="0"></td>
+                </tr>
+                <tr>
+                  <td>ODC</td>
+                  <td><input type="number" maxlength="2" id="odc" min="1" max="9" name="odc"></td>
+                  <td><input type="number" id="odc" min="1" max="9" name="odc"></td>
+                  <td><input type="radio" id="odc" name="odc" value="0"></td>
+                  <td><input type="radio" id="odc" name="odc" value="0"></td>
+                  <td><input type="radio" id="odc" name="odc" value="0"></td>
+                  <td><input type="radio" id="odc" name="odc" value="0"></td>
+                </tr>
+                <tr>
+                  <td>TMS1</td>
+                  <td><input type="number" id="tms1" min="1" max="9" name="tms1"></td>
+                  <td><input type="number" id="tms1" min="1" max="9" name="tms1"></td>
+                  <td><input type="radio" id="tms1" name="tms1" value="0"></td>
+                  <td><input type="radio" id="tms1" name="tms1" value="0"></td>
+                  <td><input type="radio" id="tms1" name="tms1" value="0"></td>
+                  <td><input type="radio" id="tms1" name="tms1" value="0"></td>
+                </tr>
+                <tr> 
+                  <td>TMS2</td>
+                  <td><input type="number" id="tms2" min="1" max="9" name="tms2"></td>
+                  <td><input type="number" id="tms2" min="1" max="9" name="tms2"></td>
+                  <td><input type="radio" id="tms2" name="tms2" value="0"></td>
+                  <td><input type="radio" id="tms2" name="tms2" value="0"></td>
+                  <td><input type="radio" id="tms2" name="tms2" value="0"></td>
+                  <td><input type="radio" id="tms2" name="tms2" value="0"></td>
+                </tr>
+                <tr>
+                  <td>Payload</td>
+                  <td><input type="number" id="pay" min="1" max="9" name="payload" ></td>
+                  <td><input type="number" id="pay" min="1" max="9" name="payload" ></td>
+                  <td><input type="radio" id="pay" name="payload" value="0"></td>
+                  <td><input type="radio" id="pay" name="payload" value="0"></td>
+                  <td><input type="radio" id="pay" name="payload" value="0"></td>
+                  <td><input type="radio" id="pay" name="payload" value="0"></td>
+                </tr>
+                <tr>
+                  <td colspan="7"><input type="submit" value="Send" onclick="submitMessage()" style="width:10%"></td>
+                </tr>
+              </table>
+            </form>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab_configuration">
+          <h2>Settings</h2>
+          <br>
+          <br>
+          <div class="btn-group">
+            <button class="btn btn-default" id="labelTheme">Design</button>
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li><a class="change-style-menu-item" href="#" rel="cerulean">Cerulean</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="darkly">Darkly</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="flatly">Flatly</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="lumen">Lumen</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="readable">Readable</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="sandstone">Sandstone</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="slate">Slate</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="spacelab">Spacelab</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="position:absolute; bottom:5px; width:100%">
+        <div>
+          <img style="vertical-align:middle" src="https://wiwi.uni-giessen.de/ep_file/fb02/show/2642/411/JLU-Logo-Symbol-gro_.png" width="60" height="60">
+          <span><a href="https://www.uni-giessen.de/studium/studienangebot/master/ptra">JLU Giessen PTRA</a></span>
+        </div>
+    </div>
+    
+    <script>
+      
+      //SPIFFS save function
+      function submitMessage() {
+        //alert("Saved value to ESP SPIFFS");
+        // Function for showing last command
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastCommand").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/command", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          document.getElementById('commandReset').value='';  
+        }, 500);
+      }
+      
+      // Change current theme
+      // Adapted from : https://wdtz.org/bootswatch-theme-selector.html
+      var supports_storage = supports_html5_storage();
+      if (supports_storage) {
+        var theme = localStorage.theme;
+        if ( typeof theme != 'undefined' ) {
+          console.log("Change the theme " + theme);
+          set_theme(get_themeUrl(theme));
+        }
+      }
+      
+      // New theme selected
+      jQuery(function($){
+        $('body').on('click', '.change-style-menu-item', function() {
+          var theme_name = $(this).attr('rel');
+          console.log("To theme" + theme_name);
+          var theme_url = get_themeUrl(theme_name);
+          console.log("URL theme : " + theme_url);
+          set_theme(theme_url);
+        });
+      });
+      // Get theme URL
+      function get_themeUrl(theme_name){
+        $('#labelTheme').html("Design : " + theme_name);
+        var url_theme = "";
+        if ( theme_name === "bootstrap" ) {
+          url_theme = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
+        } else {
+          url_theme = "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/" + theme_name + "/bootstrap.min.css";
+        }
+        if (supports_storage) {
+          // save into the local database the selected theme
+          localStorage.theme = theme_name;
+        }
+        return url_theme;
+      }
+      // Apply theme
+      function set_theme(theme_url) {
+        $('link[title="main"]').attr('href', theme_url);
+      }
+      // local storage available ?
+      function supports_html5_storage(){
+        try {
+          return 'localStorage' in window && window['localStorage'] !== null;
+        } catch (e) {
+          return false;
+        }
+      }
+      
+    // Charts and tables updating sensordata
+    var chartT = new Highcharts.Chart({
+      chart:{ renderTo : 'chart-temperature' },
+      title: { text: 'BME280 Temperature' },
+      series: [{
+        showInLegend: false,
+        data: []
+      }],
+      plotOptions: {
+        line: { animation: false,
+          dataLabels: { enabled: true }
+        },
+        series: { color: '#059e8a' }
+      },
+      xAxis: { type: 'datetime',
+        dateTimeLabelFormats: { second: '%H:%M:%S' }
+      },
+      yAxis: {
+        title: { text: 'Temperature (Celsius)' },
+        min : 0,
+        max : 60
+      },
+      credits: { enabled: false }
+    });
+    setInterval(function ( ) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("Temp").innerHTML =
+            this.responseText; // Table updating sensordata
+          var dt = new Date();
+          document.getElementById("Time1").innerHTML = dt.toLocaleString();
+          var x = (new Date()).getTime() - (new Date().getTimezoneOffset()*60*1000),
+              y = parseFloat(this.responseText); // Chart updating newest value
+          //console.log(this.responseText);
+          if(chartT.series[0].data.length > 40) {
+            chartT.series[0].addPoint([x, y], true, true, true);
+          } else {
+            chartT.series[0].addPoint([x, y], true, false, true);
+          }
+        }
+      };
+      xhttp.open("GET", "/temperature", true);
+      xhttp.send();
+    }, 15000 ) ;
+    
+    var chartA = new Highcharts.Chart({
+      chart:{ renderTo:'chart-altitude' },
+      title: { text: 'BMP280 Altitude' },
+      series: [{
+        showInLegend: false,
+        data: []
+      }],
+      plotOptions: {
+        line: { animation: false,
+          dataLabels: { enabled: true }
+        }
+      },
+      xAxis: {
+        type: 'datetime',
+        dateTimeLabelFormats: { second: '%H:%M:%S' }
+      },
+      yAxis: {
+        title: { text: 'Altitude (m)' },
+        min : 0,
+        max : 1000
+      },
+      credits: { enabled: false }
+    });
+    setInterval(function ( ) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("Altitude").innerHTML =
+            this.responseText;
+          var dt = new Date();
+          document.getElementById("Time2").innerHTML = dt.toLocaleString();
+          var x = (new Date()).getTime() - (new Date().getTimezoneOffset()*60*1000),
+              y = parseFloat(this.responseText);
+          //console.log(this.responseText);
+          if(chartA.series[0].data.length > 40) {
+            chartA.series[0].addPoint([x, y], true, true, true);
+          } else {
+            chartA.series[0].addPoint([x, y], true, false, true);
+          }
+        }
+      };
+      xhttp.open("GET", "/altitude", true);
+      xhttp.send();
+    }, 15000 ) ;
+
+    var chartP = new Highcharts.Chart({
+      chart:{ renderTo:'chart-pressure' },
+      title: { text: 'BME280 Pressure' },
+      series: [{
+        showInLegend: false,
+        data: []
+      }],
+      plotOptions: {
+        line: { animation: false,
+          dataLabels: { enabled: true }
+        },
+        series: { color: '#18009c' }
+      },
+      xAxis: {
+        type: 'datetime',
+        dateTimeLabelFormats: { second: '%H:%M:%S' }
+      },
+      yAxis: {
+        title: { text: 'Pressure (hPa)' },
+        min : 500,
+        max : 2000
+      },
+      credits: { enabled: false }
+    });
+    setInterval(function ( ) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("Pressure").innerHTML =
+            this.responseText;
+          var dt = new Date();
+          document.getElementById("Time3").innerHTML = dt.toLocaleString();
+          var x = (new Date()).getTime() - (new Date().getTimezoneOffset()*60*1000),
+              y = parseFloat(this.responseText);
+          //console.log(this.responseText);
+          if(chartP.series[0].data.length > 40) {
+            chartP.series[0].addPoint([x, y], true, true, true);
+          } else {
+            chartP.series[0].addPoint([x, y], true, false, true);
+          }
+        }
+      };
+      xhttp.open("GET", "/pressure", true);
+      xhttp.send();
+    }, 15000 ) ;
+
+    var chartPh = new Highcharts.Chart({
+      chart:{ renderTo:'chart-photo' },
+      title: { text: 'Test' },
+      series: [{
+        showInLegend: false,
+        data: []
+      }],
+      plotOptions: {
+        line: { animation: false,
+          dataLabels: { enabled: true }
+        },
+        series: { color: '#18009c' }
+      },
+      xAxis: {
+        type: 'datetime',
+        dateTimeLabelFormats: { second: '%H:%M:%S' }
+      },
+      yAxis: {
+        title: { text: 'Pressure (hPa)' },
+        min : 500,
+        max : 2000
+      },
+      credits: { enabled: false }
+    });
+    setInterval(function ( ) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("Photo").innerHTML =
+            this.responseText;
+          var dt = new Date();
+          document.getElementById("Time4").innerHTML = dt.toLocaleString();
+          var x = (new Date()).getTime() - (new Date().getTimezoneOffset()*60*1000),
+              y = parseFloat(this.responseText);
+          //console.log(this.responseText);
+          if(chartPh.series[0].data.length > 40) {
+            chartP.series[0].addPoint([x, y], true, true, true);
+          } else {
+            chartP.series[0].addPoint([x, y], true, false, true);
+          }
+        }
+      };
+      xhttp.open("GET", "/photo", true);
+      xhttp.send();
+    }, 15000 ) ;
+    
+
+    </script>
+    <iframe style="display:none" name="hidden-form"></iframe>
+  </body>
+</html>
