@@ -4,10 +4,9 @@
 
 Adrian:
 - Safe Init to SPIFFS
-- Split files in Js, HTML, CSS
 
 Immi:
-- function to solve and safe SPI package
+- function to solve and safe received SPI package
 - pack safed Init
 - pack command line
 
@@ -17,6 +16,7 @@ Not so important:
 - next to command line choose module configuration (easier command handling)
 - PinIn to show workload on website (On/Off time of a high/low Pin)
 - Turn On/Off modules in GPIO tab
+- Split files in Js, HTML, CSS
 
 <ins>Done:</ins>
 - Log files for sensordata with timestamp
