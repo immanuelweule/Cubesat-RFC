@@ -4,11 +4,11 @@
 
 Adrian:
 - Safe Init to SPIFFS
+- pack safed Init
+- pack command line
 
 Immi:
 - function to solve and safe received SPI package
-- pack safed Init
-- pack command line
 - Login reparieran
 
 Not so important:
