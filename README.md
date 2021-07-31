@@ -9,7 +9,6 @@ Adrian:
 
 Immi:
 - function to solve and safe received SPI package
-- Login reparieran
 
 Not so important:
 - buttons to download Log files
