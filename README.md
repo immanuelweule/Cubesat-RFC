@@ -9,6 +9,7 @@ Immi:
 - function to solve and safe received SPI package
 - pack safed Init
 - pack command line
+- Login reparieran
 
 Not so important:
 - buttons to download Log files
