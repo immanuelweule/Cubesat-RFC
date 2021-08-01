@@ -3,7 +3,6 @@
 <ins>To do:</ins>
 
 Adrian:
-- Safe Init to SPIFFS
 - pack safed Init
 - pack command line
 
@@ -31,3 +30,4 @@ Not so important:
 - Batch file for easier use
 - command line without refresh
 - XML to show lastCommand and lastInit
+- Safe Init to SPIFFS
