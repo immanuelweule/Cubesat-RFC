@@ -40,8 +40,8 @@
         <li><a href="#tab_measures" data-toggle="tab">Measurements</a></li>
         <li><a href="#tab_graphs" data-toggle="tab">Graphics</a></li>
         <li><a href="#tab_gpio" data-toggle="tab">GPIO  </a></li>
-        <li><a href="#tab_initialization" data-toggle="tab">Initialization</a></li>
-        <li><a href="#tab_configuration" data-toggle="tab">UI-Settings</a></li>
+        <li><a href="#tab_config" data-toggle="tab">Configuration</a></li>
+        <li><a href="#tab_settings" data-toggle="tab">UI-Settings</a></li>
       </ul>
 
       <div class="tab-content">
@@ -50,14 +50,14 @@
           <h2>Communication Interface</h2>
           <br>
           <form action="/get" target="hidden-form" name="commandForm">
-            <h4>(last send  command: <strong><span id="lastCommand">NaN</span></strong>)</h4>
-            <br>
+            <p>Use this format to send commands to a specific module:<strong> XY{command} </strong></p>
             Command : <input type="text" name="inCommand" id=commandReset>
             <input type="submit" value="Submit" onclick="submitMessage()">
+            <br><br>
+            <h4>(last send  command: <strong><span id="lastCommand">NaN</span></strong>)</h4>
             <br>
           </form>
-          <br><br>
-          <p><strong>Use this format to send commands to a specific module: XY{command} </strong></p>
+          <br>
           <h4>Current configuration:</h4>
           <br>
           <div style="width:50%;margin-left:auto;margin-right:auto;text-align: center;">
@@ -78,28 +78,28 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>ODC</td>
-                  <td><span id="">-1</span></td>
-                  <td><span id="">-1</span></td>
-                  <td><span id="">-</span></td>
+                  <td>EPM</td>
+                  <td><span id="lastCEepm">-1</span></td>
+                  <td><span id="lastPSepm">-1</span></td>
+                  <td><span id="lastAPIepm">-</span></td>
                 </tr>
                 <tr>
-                  <td>EPM</td>
-                  <td><span id="">-1</span></td>
-                  <td><span id="">-1</span></td>
-                  <td><span id="">-</span></td>
+                  <td>ODC</td>
+                  <td><span id="lastCEodc">-1</span></td>
+                  <td><span id="lastPSodc">-1</span></td>
+                  <td><span id="lastAPIodc">-</span></td>
                 </tr>
                 <tr>
                   <td>TMS</td>
-                  <td><span id="">-1</span></td>
-                  <td><span id="">-1</span></td>
-                  <td><span id="">-</span></td>
+                  <td><span id="lastCEtms">-1</span></td>
+                  <td><span id="lastPStms">-1</span></td>
+                  <td><span id="lastAPItms">-</span></td>
                 </tr>
                 <tr>
                   <td>PAY</td>
-                  <td><span id="">-1</span></td>
-                  <td><span id="">-1</span></td>
-                  <td><span id="">-</span></td>
+                  <td><span id="lastCEpay">-1</span></td>
+                  <td><span id="lastPSpay">-1</span></td>
+                  <td><span id="lastAPIpay">-</span></td>
                 </tr>
               </tbody>
             </table>
@@ -302,133 +302,124 @@
           </div>
         </div>
 
-        <div class="tab-pane fade" id="tab_initialization">
-          <h2>Initialization</h2>
+        <div class="tab-pane fade" id="tab_config">
+          <h2>Hardware configuration</h2>
           <br>
           <h4>Current configuration:</h4>
           <br>
-          <div style="width:80%;margin-left:auto;margin-right:auto;text-align: center;">
-            <div style="width:60%;margin-left:auto;margin-right:auto;text-align: center;">
-              <table id="tab_initialization" data-toggle="table" data-show-colunns="true">
-                <colgroup>
-                  <col span="1" style="width: 30%;">
-                  <col span="1" style="width: 20%;">
-                  <col span="1" style="width: 20%;">
-                  <col span="1" style="width: 20%;">
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th class="text-center">Modul</th>
-                    <th class="text-center">ComEn line (X)</th>
-                    <th class="text-center">PS line (Y)</th>
-                    <th class="text-center">API</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>ODC</td>
-                    <td><span id="">-1</span></td>
-                    <td><span id="">-1</span></td>
-                    <td><span id="">-</span></td>
-                  </tr>
-                  <tr>
-                    <td>EPM</td>
-                    <td><span id="">-1</span></td>
-                    <td><span id="">-1</span></td>
-                    <td><span id="">-</span></td>
-                  </tr>
-                  <tr>
-                    <td>TMS</td>
-                    <td><span id="">-1</span></td>
-                    <td><span id="">-1</span></td>
-                    <td><span id="">-</span></td>
-                  </tr>
-                  <tr>
-                    <td>PAY</td>
-                    <td><span id="">-1</span></td>
-                    <td><span id="">-1</span></td>
-                    <td><span id="">-</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <br><br>
-            <p><strong>Use the initilization table to send the present hardware configuration so that ground control communication will work properly.</strong></p>
-            <br>
-            <form name="initForm" action="/get" target="hidden-form">
-              <table id="tab_initialization" data-toggle="table" data-show-colunns="true">
-                <colgroup>
-                    <col span="1" style="width:24%" >
-                    <col span="1" style="width:16%">
-                    <col span="1" style="width:16%">
-                    <col span="1" style="width:11%">
-                    <col span="1" style="width:11%">
-                    <col span="1" style="width:11%">
-                    <col span="1" style="width:11%">
-                </colgroup>
+          <div style="width:60%;margin-left:auto;margin-right:auto;text-align: center;">
+            <table id="tab_config" data-toggle="table" data-show-colunns="true">
+              <colgroup>
+                <col span="1" style="width: 30%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 20%;">
+              </colgroup>
+              <thead>
                 <tr>
-                  <th></th>
-                  <th class="text-center">ComEn line</th> 
-                  <th class="text-center">PS line</th>
-                  <th class="text-center">SR</th>
-                  <th class="text-center">AI</th>
-                  <th class="text-center">SPI</th>
-                  <th class="text-center">I2C</th>
+                  <th class="text-center">Modul</th>
+                  <th class="text-center">ComEn line (X)</th>
+                  <th class="text-center">PS line (Y)</th>
+                  <th class="text-center">API</th>
                 </tr>
+              </thead>
+              <tbody>
                 <tr>
                   <td>EPM</td>
-                  <td><input type="number" id="epm" min="1" max="9" name="epm"></td>
-                  <td><input type="number" id="epm" min="1" max="9" name="epm"></td>
-                  <td><input type="radio" id="epm" name="epm" value="0"></td>
-                  <td><input type="radio" id="epm" name="epm" value="0"></td>
-                  <td><input type="radio" id="epm" name="epm" value="0"></td>
-                  <td><input type="radio" id="epm" name="epm" value="0"></td>
+                  <td><span id="lastCEepm2">-1</span></td>
+                  <td><span id="lastPSepm2">-1</span></td>
+                  <td><span id="lastAPIepm2">-</span></td>
                 </tr>
                 <tr>
                   <td>ODC</td>
-                  <td><input type="number" maxlength="2" id="odc" min="1" max="9" name="odc"></td>
-                  <td><input type="number" id="odc" min="1" max="9" name="odc"></td>
-                  <td><input type="radio" id="odc" name="odc" value="0"></td>
-                  <td><input type="radio" id="odc" name="odc" value="0"></td>
-                  <td><input type="radio" id="odc" name="odc" value="0"></td>
-                  <td><input type="radio" id="odc" name="odc" value="0"></td>
+                  <td><span id="lastCEodc2">-1</span></td>
+                  <td><span id="lastPSodc2">-1</span></td>
+                  <td><span id="lastAPIodc2">-</span></td>
                 </tr>
                 <tr>
-                  <td>TMS1</td>
-                  <td><input type="number" id="tms1" min="1" max="9" name="tms1"></td>
-                  <td><input type="number" id="tms1" min="1" max="9" name="tms1"></td>
-                  <td><input type="radio" id="tms1" name="tms1" value="0"></td>
-                  <td><input type="radio" id="tms1" name="tms1" value="0"></td>
-                  <td><input type="radio" id="tms1" name="tms1" value="0"></td>
-                  <td><input type="radio" id="tms1" name="tms1" value="0"></td>
-                </tr>
-                <tr> 
-                  <td>TMS2</td>
-                  <td><input type="number" id="tms2" min="1" max="9" name="tms2"></td>
-                  <td><input type="number" id="tms2" min="1" max="9" name="tms2"></td>
-                  <td><input type="radio" id="tms2" name="tms2" value="0"></td>
-                  <td><input type="radio" id="tms2" name="tms2" value="0"></td>
-                  <td><input type="radio" id="tms2" name="tms2" value="0"></td>
-                  <td><input type="radio" id="tms2" name="tms2" value="0"></td>
+                  <td>TMS</td>
+                  <td><span id="lastCEtms2">-1</span></td>
+                  <td><span id="lastPStms2">-1</span></td>
+                  <td><span id="lastAPItms2">-</span></td>
                 </tr>
                 <tr>
-                  <td>Payload</td>
-                  <td><input type="number" id="pay" min="1" max="9" name="payload" ></td>
-                  <td><input type="number" id="pay" min="1" max="9" name="payload" ></td>
-                  <td><input type="radio" id="pay" name="payload" value="0"></td>
-                  <td><input type="radio" id="pay" name="payload" value="0"></td>
-                  <td><input type="radio" id="pay" name="payload" value="0"></td>
-                  <td><input type="radio" id="pay" name="payload" value="0"></td>
+                  <td>PAY</td>
+                  <td><span id="lastCEpay2">-1</span></td>
+                  <td><span id="lastPSpay2">-1</span></td>
+                  <td><span id="lastAPIpay2">-</span></td>
                 </tr>
-                <tr>
-                  <td colspan="7"><input type="submit" value="Send" onclick="submitMessage()" style="width:10%"></td>
-                </tr>
-              </table>
-            </form>
-          </div>
+              </tbody>
+            </table>
+            </div>
+            <br><br>
+            <p><strong>Use the configuration table to set the present hardware configuration so that the communication will work properly.</strong></p>
+            <br>
+            <div style="width:60%;margin-left:auto;margin-right:auto;text-align: center;">
+              <form id="configForm" action="/get" target="hidden-form">
+                <table id="tab_config" data-toggle="table" data-show-colunns="true">
+                  <colgroup>
+                      <col span="1" style="width:24%" >
+                      <col span="1" style="width:16%">
+                      <col span="1" style="width:16%">
+                      <col span="1" style="width:11%">
+                      <col span="1" style="width:11%">
+                      <col span="1" style="width:11%">
+                      <col span="1" style="width:11%">
+                  </colgroup>
+                  <tr>
+                    <th></th>
+                    <th class="text-center">ComEn line</th> 
+                    <th class="text-center">PS line</th>
+                    <th class="text-center">SR</th>
+                    <th class="text-center">aI</th>
+                    <th class="text-center">SPI</th>
+                    <th class="text-center">I2C</th>
+                  </tr>
+                  <tr>
+                    <td>EPM</td>
+                    <td><input type="number" id="epm" min="1" max="9" name="CEepm"></td>
+                    <td><input type="number" id="epm" min="1" max="9" name="PSepm"></td>
+                    <td><input type="radio" id="sr" name="APIepm" value="SR"></td>
+                    <td><input type="radio" id="ai" name="APIepm" value="aI"></td>
+                    <td><input type="radio" id="spi" name="APIepm" value="API"></td>
+                    <td><input type="radio" id="i2c" name="APIepm" value="I2C"></td>
+                  </tr>
+                  <tr>
+                    <td>ODC</td>
+                    <td><input type="number" maxlength="2" id="odc" min="1" max="9" name="CEodc"></td>
+                    <td><input type="number" id="odc" min="1" max="9" name="PSodc"></td>
+                    <td><input type="radio" id="sr" name="APIodc" value="SR"></td>
+                    <td><input type="radio" id="ai" name="APIodc" value="aI"></td>
+                    <td><input type="radio" id="spi" name="APIodc" value="SPI"></td>
+                    <td><input type="radio" id="i2c" name="APIodc" value="I2C"></td>
+                  </tr>
+                  <tr>
+                    <td>TMS</td>
+                    <td><input type="number" id="tms" min="1" max="9" name="CEtms"></td>
+                    <td><input type="number" id="tms" min="1" max="9" name="PStms"></td>
+                    <td><input type="radio" id="tms" name="APItms" value="SR"></td>
+                    <td><input type="radio" id="tms" name="APItms" value="aI"></td>
+                    <td><input type="radio" id="tms" name="APItms" value="SPI"></td>
+                    <td><input type="radio" id="tms" name="APItms" value="I2C"></td>
+                  </tr>
+                  <tr>
+                    <td>Payload</td>
+                    <td><input type="number" id="pay" min="1" max="9" name="CEpay" ></td>
+                    <td><input type="number" id="pay" min="1" max="9" name="PSpay" ></td>
+                    <td><input type="radio" id="pay" name="APIpay" value="SR"></td>
+                    <td><input type="radio" id="pay" name="APIpay" value="aI"></td>
+                    <td><input type="radio" id="pay" name="APIpay" value="SPI"></td>
+                    <td><input type="radio" id="pay" name="APIpay" value="I2C"></td>
+                  </tr>
+                  <tr>
+                    <td colspan="7"><input type="submit" value="Send" onclick="submitMessage2()" style="width:10%"></td>
+                  </tr>
+                </table>
+              </form>
+            </div>
         </div>
 
-        <div class="tab-pane fade" id="tab_configuration">
+        <div class="tab-pane fade" id="tab_settings">
           <h2>Settings</h2>
           <br>
           <br>
@@ -459,7 +450,7 @@
     
     <script>
       
-      //SPIFFS save function
+      //SPIFFS save function and update for command 
       function submitMessage() {
         //alert("Saved value to ESP SPIFFS");
         // Function for showing last command
@@ -474,9 +465,179 @@
           xhttp.open("GET", "/command", true);
           xhttp.send();
         }, 500);
+        // function to clear text input
         setTimeout(function ( ) {
           document.getElementById('commandReset').value='';  
         }, 500);
+      }
+
+      //SPIFFS save function and update for config
+      function submitMessage2() {
+
+        //function to show last configuration
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastCEepm").innerHTML =
+                this.responseText;
+              document.getElementById("lastCEepm2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/ceepm", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastPSepm").innerHTML =
+                this.responseText;
+              document.getElementById("lastPSepm2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/psepm", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastCEodc").innerHTML =
+                this.responseText;
+              document.getElementById("lastCEodc2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/ceodc", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastPSodc").innerHTML =
+                this.responseText;
+              document.getElementById("lastPSodc2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/psodc", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastCEtms").innerHTML =
+                this.responseText;
+              document.getElementById("lastCEtms2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/cetms", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastPStms").innerHTML =
+                this.responseText;
+              document.getElementById("lastPStms2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/pstms", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastCEpay").innerHTML =
+                this.responseText;
+              document.getElementById("lastCEpay2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/cepay", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastPSpay").innerHTML =
+                this.responseText;
+              document.getElementById("lastPSpay2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/pspay", true);
+          xhttp.send();
+        }, 500);
+
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastAPIepm").innerHTML =
+                this.responseText;
+              document.getElementById("lastAPIepm2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/apiepm", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastAPIodc").innerHTML =
+                this.responseText;
+              document.getElementById("lastAPIodc2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/apiodc", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastAPItms").innerHTML =
+                this.responseText;
+              document.getElementById("lastAPItms2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/apitms", true);
+          xhttp.send();
+        }, 500);
+        setTimeout(function ( ) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("lastAPIpay").innerHTML =
+                this.responseText;
+              document.getElementById("lastAPIpay2").innerHTML =
+                this.responseText;
+            }
+          };
+          xhttp.open("GET", "/apipay", true);
+          xhttp.send();
+        }, 500);
+        
+        // function to clear text inputs after send (if needed)
+        /**
+        setTimeout(function ( ) {
+          document.getElementById('configForm').reset();
+        }, 500); **/
       }
       
       // Change current theme
@@ -572,7 +733,7 @@
       };
       xhttp.open("GET", "/temperature", true);
       xhttp.send();
-    }, 15000 ) ;
+    }, 30000 ) ;
     
     var chartA = new Highcharts.Chart({
       chart:{ renderTo:'chart-altitude' },
@@ -617,7 +778,7 @@
       };
       xhttp.open("GET", "/altitude", true);
       xhttp.send();
-    }, 15000 ) ;
+    }, 30000 ) ;
 
     var chartP = new Highcharts.Chart({
       chart:{ renderTo:'chart-pressure' },
@@ -663,7 +824,7 @@
       };
       xhttp.open("GET", "/pressure", true);
       xhttp.send();
-    }, 15000 ) ;
+    }, 30000 ) ;
 
     var chartPh = new Highcharts.Chart({
       chart:{ renderTo:'chart-photo' },
@@ -709,7 +870,7 @@
       };
       xhttp.open("GET", "/photo", true);
       xhttp.send();
-    }, 15000 ) ;
+    }, 30000 ) ;
     
 
     </script>
