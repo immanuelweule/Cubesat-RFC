@@ -14,7 +14,8 @@ Not so important:
 - Module setter for request frequency (in sec)
 - next to command line choose module configuration (easier command handling)
 - PinIn to show workload on website (On/Off time of a high/low Pin)
-- Turn On/Off modules in GPIO tab
+- Check after initialization if modules are working and show it in Tab "Modules"
+- Turn On/Off modules in "Modules" tab
 - Split files in Js, HTML, CSS
 
 <ins>Done:</ins>
