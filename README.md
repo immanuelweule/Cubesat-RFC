@@ -36,9 +36,9 @@ Not so important:
 
 
     <ins>New:</ins>
-
-    - Refresh of Config after restart
     - Build config files for checking incoming comm
+    - Refresh of Config on webpage after restart
+    - Config file stays after restart
     - XML to show lastCommand and lastInit
     - Safe Init to SPIFFS
     - command line without refresh
