@@ -46,6 +46,10 @@ const char* http_username = "admin";  // username for login
 const char* http_password = "admin";  // password for login
 
 const char* PARAM_COMMAND = "inCommand"; //Variable for commandline SPIFFS file
+const char* PARAM_COMMAND2 = "inCommand2"; // Variables for last commands 
+const char* PARAM_COMMAND3 = "inCommand3";
+const char* PARAM_COMMAND4 = "inCommand4";
+const char* PARAM_COMMAND5 = "inCommand5";
 
 //Variables for hardware configuration SPIFFS files
 const char* PS_EPM = "PSepm";
@@ -110,47 +114,50 @@ void notFound(AsyncWebServerRequest *request) {
 
 String readFile(fs::FS &fs, const char * path){
   Serial.printf("Reading file: %s\r\n", path);
-  File file = fs.open(path, "r");
-  if(!file || file.isDirectory()){
+  File f = fs.open(path, "r");
+  if(!f || f.isDirectory()){
     Serial.println("- empty file or failed to open file");
     return String();
   }
   Serial.println("- read from file:");
   String fileContent;
-  while(file.available()){
-    fileContent+=String((char)file.read());
+  while(f.available()){
+    fileContent+=String((char)f.read());
   }
-  file.close();
+  f.close();
   Serial.println(fileContent);
   return fileContent;
 }
 
 void writeFile(fs::FS &fs, const char * path, const char * message){
   Serial.printf("Writing file: %s\r\n", path);
-  File file = fs.open(path, "w");
-  if(!file){
+  File f = fs.open(path, "w");
+  if(!f){
     Serial.println("- failed to open file for writing");
     return;
   }
-  if(file.print(message)){
+  if(f.print(message)){
     Serial.println("- file written");
   } else {
     Serial.println("- write failed");
   }
-  file.close();
+  f.close();
 }
       
-void writeConfig() {
-  File f = SPIFFS.open("/ceEPM.txt", "r");
-  File f2 = SPIFFS.open("/psEPM.txt", "r");
-  writeFile(SPIFFS, "/configEPM", "");
-  File f3 = SPIFFS.open("/configEPM", "a");
-
-  return;
+void writeConfig(String ident) {
+  String ce = (readFile(SPIFFS, ("/ce" + ident + ".txt").c_str()));
+  String ps = (readFile(SPIFFS, ("/ps" + ident + ".txt").c_str()));
+  Serial.println(ce);
+  Serial.println(ps);
+  File f = SPIFFS.open("/configEPM.txt", "a");
+  f.printf("%s%s", ce, ps);
+  f.close();
+  
 }
 
 void sendCommand() {
-  File f = SPIFFS.open("/inCommand.txt", "r");
+  String command = readFile(SPIFFS, "/inCommand.txt");
+  //SPI function to send string
   return;
 }
 
@@ -233,6 +240,7 @@ void setup(void){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
+  
   // Header for SPIFFS Files
   const char* header1 = "Log File Temperature\n";
   const char* header2 = "Log File Altitude\n";
@@ -240,6 +248,11 @@ void setup(void){
   writeFile(SPIFFS, "/logT.txt", header1);
   writeFile(SPIFFS, "/logA.txt", header2);
   writeFile(SPIFFS, "/logP.txt", header3);
+  writeFile(SPIFFS, "/configEPM", "");
+  writeFile(SPIFFS, "/configODC", "");
+  writeFile(SPIFFS, "/configTMS", "");
+  writeFile(SPIFFS, "/configPAY", "");
+  
   
   //Initialize how ESP should act - AP or STA (comment out one initialization)
   //WiFi.mode(WIFI_AP); //Access point mode: stations can connect to the ESP
@@ -387,8 +400,8 @@ void setup(void){
 
       inputMessage = request->getParam(API_PAY)->value();
       writeFile(SPIFFS, "/apiPAY.txt", inputMessage.c_str());
-
-      writeConfig();
+      delay(500);
+      writeConfig("EPM");
     }
     else {
       inputMessage = "No message sent";
@@ -430,7 +443,8 @@ void loop(void){
   }
   
   //To access your stored values 
-  //readFile(SPIFFS, "/apiEPM.txt");
+  readFile(SPIFFS, "/psEPM.txt");
+  readFile(SPIFFS, "/configEPM.txt");
 
   delay(10000);
 }
