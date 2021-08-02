@@ -10,7 +10,7 @@
 
     input[type=text]{ 
       text-align: left; 
-      width: 60%;
+      width: 50%;
     }
 
     .chart1,
@@ -28,7 +28,8 @@
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/superhero/bootstrap.min.css" rel="stylesheet" title="main">
-    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js">
+  </script>
       
   </head>
   <body>
@@ -39,7 +40,7 @@
         <li class="active"><a href="#tab_comm" data-toggle="tab">Communication</a></li>
         <li><a href="#tab_measures" data-toggle="tab">Measurements</a></li>
         <li><a href="#tab_graphs" data-toggle="tab">Graphics</a></li>
-        <li><a href="#tab_gpio" data-toggle="tab">GPIO  </a></li>
+        <li><a href="#tab_modules" data-toggle="tab">Modules </a></li>
         <li><a href="#tab_config" data-toggle="tab">Configuration</a></li>
         <li><a href="#tab_settings" data-toggle="tab">UI-Settings</a></li>
       </ul>
@@ -49,18 +50,37 @@
         <div class="tab-pane fade in active" id="tab_comm">
           <h2>Communication Interface</h2>
           <br>
+          <div style="width:50%;margin-left:auto;margin-right:auto;">
+          <table style="width:100%;text-align:left;padding:5px"; frame="box">
+            <tr>
+              <td><span id="lastCommand5">&#8205;</span></td>
+            </tr>
+            <tr>
+              <td><span id="lastCommand4">&#8205;</span></td>
+            </tr>
+            <tr>
+              <td><span id="lastCommand3">&#8205;</span></td>
+            </tr>
+            <tr>
+              <td><span id="lastCommand2">&#8205;</span></td>
+            </tr>
+            <tr>
+              <td><span id="lastCommand">&#8205;</span></td>
+            </tr>
+          </table>
+          </div>
           <form action="/get" target="hidden-form" name="commandForm">
-            <p>Use this format to send commands to a specific module:<strong> XY{command} </strong></p>
-            Command : <input type="text" name="inCommand" id=commandReset>
-            <input type="submit" value="Submit" onclick="submitMessage()">
+            <br>
+            Command:&nbsp;<input type="text" name="inCommand" id=commandReset> &#8205;
+            <input type="submit" value="Submit" onclick="submitMessage()" style="width:6%">
             <br><br>
-            <h4>(last send  command: <strong><span id="lastCommand">NaN</span></strong>)</h4>
+            <p>Use this format to send commands to a specific module:<strong> XY{command} </strong></p>
             <br>
           </form>
           <br>
           <h4>Current configuration:</h4>
           <br>
-          <div style="width:50%;margin-left:auto;margin-right:auto;text-align: center;">
+          <div style="width:50%;margin-left:auto;margin-right:auto;">
             <table data-toggle="table" data-show-colunns="true">
               <colgroup>
                 <col span="1" style="width: 30%;">
@@ -249,8 +269,8 @@
           </div>
         </div>
 
-        <div class="tab-pane fade" id="tab_gpio">
-          <h2>GPIO</h2>
+        <div class="tab-pane fade" id="tab_modules">
+          <h2>Modules</h2>
           <br>
           <div style="width:60%;margin-left:auto;margin-right:auto;text-align: center;">
             <div class="row">
@@ -449,7 +469,7 @@
     </div>
     
     <script>
-      
+      submitMessage2()
       //SPIFFS save function and update for command 
       function submitMessage() {
         //alert("Saved value to ESP SPIFFS");
@@ -634,10 +654,9 @@
         }, 500);
         
         // function to clear text inputs after send (if needed)
-        /**
         setTimeout(function ( ) {
           document.getElementById('configForm').reset();
-        }, 500); **/
+        }, 500);
       }
       
       // Change current theme
@@ -768,7 +787,6 @@
           document.getElementById("Time2").innerHTML = dt.toLocaleString();
           var x = (new Date()).getTime() - (new Date().getTimezoneOffset()*60*1000),
               y = parseFloat(this.responseText);
-          //console.log(this.responseText);
           if(chartA.series[0].data.length > 40) {
             chartA.series[0].addPoint([x, y], true, true, true);
           } else {
@@ -814,7 +832,6 @@
           document.getElementById("Time3").innerHTML = dt.toLocaleString();
           var x = (new Date()).getTime() - (new Date().getTimezoneOffset()*60*1000),
               y = parseFloat(this.responseText);
-          //console.log(this.responseText);
           if(chartP.series[0].data.length > 40) {
             chartP.series[0].addPoint([x, y], true, true, true);
           } else {
