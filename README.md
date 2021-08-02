@@ -19,6 +19,8 @@ Not so important:
 - Check after initialization if modules are working and show it in Tab "Modules"
 - Turn On/Off modules in "Modules" tab
 - Split files in Js, HTML, CSS
+- Clean up functions 
+- Clean up leftovers from testing
 
 <ins>Done:</ins>
 - Log files for sensordata with timestamp
