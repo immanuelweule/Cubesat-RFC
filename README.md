@@ -31,6 +31,12 @@ Not so important:
 - Added links for later research
 - Fix IP Adress (cubesat.local/)
 - Batch file for easier use
-- command line without refresh
-- XML to show lastCommand and lastInit
-- Safe Init to SPIFFS
+
+
+    New:
+
+    - Refresh of Config after restart
+    - Build config files for checking incoming comm
+    - XML to show lastCommand and lastInit
+    - Safe Init to SPIFFS
+    - command line without refresh
