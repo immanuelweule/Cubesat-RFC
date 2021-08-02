@@ -3,6 +3,7 @@
 <ins>To do:</ins>
 
 Adrian:
+- command line terminal style with last sends
 - pack safed Init
 - pack command line
 - show workload on website (On/Off time of a high/low Pin)
