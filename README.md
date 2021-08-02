@@ -5,15 +5,16 @@
 Adrian:
 - pack safed Init
 - pack command line
+- show workload on website (On/Off time of a high/low Pin)
 
 Immi:
 - function to solve and safe received SPI package
+- function for workload (On/Off time of a high/low Pin)
 
 Not so important:
 - buttons to download Log files
 - Module setter for request frequency (in sec)
 - next to command line choose module configuration (easier command handling)
-- PinIn to show workload on website (On/Off time of a high/low Pin)
 - Check after initialization if modules are working and show it in Tab "Modules"
 - Turn On/Off modules in "Modules" tab
 - Split files in Js, HTML, CSS
