@@ -44,3 +44,4 @@ Not so important:
     - XML to show lastCommand and lastInit
     - Safe Init to SPIFFS
     - command line without refresh
+    - SPI Comm with ESP as master and STM as slave (not integrated in code yet)
