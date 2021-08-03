@@ -36,6 +36,8 @@ Not so important:
 
 
     <ins>New:</ins>
+    - Simplified Value checks in js (with arrays)
+    - Simplified Config Safe (with arrays)
     - Build config files for checking incoming comm
     - Refresh of Config on webpage after restart
     - Config file stays after restart
