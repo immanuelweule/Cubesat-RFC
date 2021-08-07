@@ -3,9 +3,8 @@
 <ins>To do:</ins>
 
 Adrian:
-- show workload on website (On/Off time of a high/low Pin)
+- update workload
 - Module setter for request frequency (in sec)
-- buttons to download Log files
 
 Immi:
 - function to solve and safe received SPI package
@@ -33,6 +32,7 @@ Not so important:
 
 
     <ins>New:</ins>
+    - buttons to download Log files
     - pack command line
     - pack safed Init
     - command line terminal style with last sends
