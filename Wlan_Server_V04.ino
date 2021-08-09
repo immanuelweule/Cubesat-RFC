@@ -45,8 +45,34 @@ const char* password = "06456469822825645048"; //WiFi password
 const char* http_username = "admin";  // username for login
 const char* http_password = "admin";  // password for login
 
-const char* PARAM_COMMAND = "inCommand"; //Variable for commandline
-const char* PARAM_INIT = "inInit"; //Variable for initilization
+const char* PARAM_COMMAND1 = "inCommand1"; //Variable for commandline SPIFFS file
+const char* PARAM_COMMAND2 = "inCommand2"; // Variables for last commands 
+const char* PARAM_COMMAND3 = "inCommand3";
+const char* PARAM_COMMAND4 = "inCommand4";
+const char* PARAM_COMMAND5 = "inCommand5";
+const char* TEST = "test";
+
+//Variables for hardware configuration SPIFFS files
+const char* PS_EPM = "PSepm";
+const char* PS_ODC = "PSodc";
+const char* PS_TMS = "PStms";
+const char* PS_PAY = "PSpay";
+const char* CE_EPM = "CEepm";
+const char* CE_ODC = "CEodc";
+const char* CE_TMS = "CEtms";
+const char* CE_PAY = "CEpay";
+const char* API_EPM = "APIepm";
+const char* API_ODC = "APIodc";
+const char* API_TMS = "APItms";
+const char* API_PAY = "APIpay";
+
+//String Array of modules for easier handling
+char arr[][4] = {
+  "EPM","ODC","TMS","PAY"
+};
+char arr2[][4] = {
+  "epm","odc","tms","pay"
+};
 
 
 int numLog = 0; // numerator for log file
@@ -97,49 +123,57 @@ void notFound(AsyncWebServerRequest *request) {
 
 String readFile(fs::FS &fs, const char * path){
   Serial.printf("Reading file: %s\r\n", path);
-  File file = fs.open(path, "r");
-  if(!file || file.isDirectory()){
+  File f = fs.open(path, "r");
+  if(!f || f.isDirectory()){
     Serial.println("- empty file or failed to open file");
     return String();
   }
   Serial.println("- read from file:");
   String fileContent;
-  while(file.available()){
-    fileContent+=String((char)file.read());
+  while(f.available()){
+    fileContent+=String((char)f.read());
   }
-  file.close();
+  f.close();
   Serial.println(fileContent);
   return fileContent;
 }
 
 void writeFile(fs::FS &fs, const char * path, const char * message){
   Serial.printf("Writing file: %s\r\n", path);
-  File file = fs.open(path, "w");
-  if(!file){
+  File f = fs.open(path, "w");
+  if(!f){
     Serial.println("- failed to open file for writing");
     return;
   }
-  if(file.print(message)){
+  if(f.print(message)){
     Serial.println("- file written");
   } else {
     Serial.println("- write failed");
   }
-  file.close();
+  f.close();
+}
+      
+void writeConfig(String ident) {
+  String ce = (readFile(SPIFFS, ("/ce" + ident + ".txt").c_str()));
+  String ps = (readFile(SPIFFS, ("/ps" + ident + ".txt").c_str()));
+  File f = SPIFFS.open("/config" + ident + ".txt", "w");
+  f.printf("%s%s", ce, ps);
+  f.close();
+  readFile(SPIFFS, ("/config" + ident + ".txt").c_str());
+  return;
 }
 
-//Replaces placeholder with stored values
-String processor(const String& var){
-  //Serial.println(var);
-  if(var == "inCommand"){
-    return readFile(SPIFFS, "/inCommand.txt");
-  }
-  else if(var == "inInit"){
-    return readFile(SPIFFS, "/inInit.txt");
-  }
-  return String();
+void sendCommand() {
+  const char * commandPt = (readFile(SPIFFS, "/inCommand.txt")).c_str();
+  //SPI function to send command
+  return;
 }
 
-
+int determineConfig() {
+  int config = 0;
+  
+  return config;
+}
 
 //===============================================================
 // Test Functions
@@ -152,7 +186,7 @@ String readBMP280Temperature() {
   // Convert temperature to Fahrenheit
   //t = 1.8 * t + 32;
   if (isnan(temp)) {    
-    Serial.println("Failed to read from BMP280 sensor!");
+    Serial.println("Failed to read temp from BMP280 sensor!");
     return "";
   }
   else {
@@ -167,7 +201,7 @@ String readBMP280Temperature() {
 String readBMP280Altitude() {
   float alt = bmp.readAltitude(1013.25);
   if (isnan(alt)) {
-    Serial.println("Failed to read from BMP280 sensor!");
+    Serial.println("Failed to read alt from BMP280 sensor!");
     return "";
   }
   else {
@@ -182,7 +216,7 @@ String readBMP280Altitude() {
 String readBMP280Pressure() {
   float pres = bmp.readPressure() / 100.0F;
   if (isnan(pres)) {
-    Serial.println("Failed to read from BMP280 sensor!");
+    Serial.println("Failed to read pres from BMP280 sensor!");
     return "";
   }
   else {
@@ -194,19 +228,6 @@ String readBMP280Pressure() {
     return String(pres);
   }
 }
-
-/* String readPhoto() {
-  float ph = analogRead(Analog_Pin);
-  if (isnan(ph)) {
-    Serial.println("Failed to read from analog sensor!");
-    return "";
-  }
-  else {
-    Serial.println(ph);
-    return String(ph);
-  }
-} */
-
 
 
 //===============================================================
@@ -228,6 +249,7 @@ void setup(void){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
+  
   // Header for SPIFFS Files
   const char* header1 = "Log File Temperature\n";
   const char* header2 = "Log File Altitude\n";
@@ -235,6 +257,13 @@ void setup(void){
   writeFile(SPIFFS, "/logT.txt", header1);
   writeFile(SPIFFS, "/logA.txt", header2);
   writeFile(SPIFFS, "/logP.txt", header3);
+  
+  writeFile(SPIFFS, "/inCommand1.txt", "Booting...");
+  writeFile(SPIFFS, "/inCommand2.txt", " ");
+  writeFile(SPIFFS, "/inCommand3.txt", " ");
+  writeFile(SPIFFS, "/inCommand4.txt", " ");
+  writeFile(SPIFFS, "/inCommand5.txt", " ");
+  
   
   //Initialize how ESP should act - AP or STA (comment out one initialization)
   //WiFi.mode(WIFI_AP); //Access point mode: stations can connect to the ESP
@@ -255,59 +284,158 @@ void setup(void){
   });
   
   server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
-      return request->requestAuthentication();
     request->send_P(200, "text/plain", readBMP280Temperature().c_str());
   });
-  server.on("/altitude", HTTP_GET, [](AsyncWebServerRequest *request){®
-    if(!request->authenticate(http_username, http_password))
-      return request->requestAuthentication();
+  server.on("/altitude", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", readBMP280Altitude().c_str());
   });
   server.on("/pressure", HTTP_GET, [](AsyncWebServerRequest *request){
-    if(!request->authenticate(http_username, http_password))
-      return request->requestAuthentication();
     request->send_P(200, "text/plain", readBMP280Pressure().c_str());
   });
-  server.on("/command", HTTP_GET, [](AsyncWebServerRequest *request){
+
+  
+  //Commands
+  server.on("/command1", HTTP_GET, [](AsyncWebServerRequest *request){
     if(!request->authenticate(http_username, http_password))
       return request->requestAuthentication();
-    request->send(SPIFFS, "/inCommand.txt", "text/text");
+    request->send(SPIFFS, "/inCommand1.txt", "text/text");
   });
-  /* server.on("/photo", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/plain", readPhoto().c_str());
-  }); */
-  
+  server.on("/command2", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/inCommand2.txt", "text/text");
+  });
+  server.on("/command3", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/inCommand3.txt", "text/text");
+  });
+  server.on("/command4", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/inCommand4.txt", "text/text");
+  });
+  server.on("/command5", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/inCommand5.txt", "text/text");
+  });
+
+  //Config values
+  server.on("/ceepm", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/ceEPM.txt", "text/text");
+  });
+  server.on("/psepm", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/psEPM.txt", "text/text");
+  });
+  server.on("/ceodc", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/ceODC.txt", "text/text");
+  });
+  server.on("/psodc", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/psODC.txt", "text/text");
+  });
+  server.on("/cetms", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/ceTMS.txt", "text/text");
+  });
+  server.on("/pstms", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/psTMS.txt", "text/text");
+  });
+  server.on("/cepay", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/cePAY.txt", "text/text");
+  });
+  server.on("/pspay", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/psPAY.txt", "text/text");
+  });
+  server.on("/apiepm", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/apiEPM.txt", "text/text");
+  });
+  server.on("/apiodc", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/apiODC.txt", "text/text");
+  });
+  server.on("/apitms", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/apiTMS.txt", "text/text");
+  });
+  server.on("/apipay", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(http_username, http_password))
+      return request->requestAuthentication();
+    request->send(SPIFFS, "/apiPAY.txt", "text/text");
+  });
+
+  //Download log files
+  server.on("/download1", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/logT.txt", "text/text", true);
+  });
+  server.on("/download2", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/logA.txt", "text/text", true);
+  });
+  server.on("/download3", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/logP.txt", "text/text", true);
+  });
+
   //Send a GET request to <ESP_IP>/get?inputString=<inputMessage>
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
     if(!request->authenticate(http_username, http_password))
       return request->requestAuthentication();
     String inputMessage;
-    // GET inCommand value on <ESP_IP>/get?inCommand=<inputMessage>
-    if (request->hasParam(PARAM_COMMAND)) {
-      inputMessage = request->getParam(PARAM_COMMAND)->value();
-      writeFile(SPIFFS, "/inCommand.txt", inputMessage.c_str());
+    // GET inCommand value on <ESP_IP>/get?inCommand=<inputMessage> and safe SPIFFS file
+    if (request->hasParam(PARAM_COMMAND1)) {
+      inputMessage = request->getParam(PARAM_COMMAND1)->value();
+      writeFile(SPIFFS, "/inCommand5.txt", (readFile(SPIFFS, "/inCommand4.txt").c_str()));
+      writeFile(SPIFFS, "/inCommand4.txt", (readFile(SPIFFS, "/inCommand3.txt").c_str()));
+      writeFile(SPIFFS, "/inCommand3.txt", (readFile(SPIFFS, "/inCommand2.txt").c_str()));
+      writeFile(SPIFFS, "/inCommand2.txt", (readFile(SPIFFS, "/inCommand1.txt").c_str()));
+      writeFile(SPIFFS, "/inCommand1.txt", inputMessage.c_str());
     }
-    //GET inInt value on <ESP_IP>/get?inpInt=<inputMessage>
-    else if (request->hasParam(PARAM_INIT)) {
-      inputMessage = request->getParam(PARAM_INIT)->value();
-      writeFile(SPIFFS, "/inInit.txt", inputMessage.c_str());
+    else if (request->hasParam(TEST)) {
+      inputMessage = request->getParam(PARAM_COMMAND1)->value();
+      writeFile(SPIFFS, "/inCommand2.txt", inputMessage.c_str());
+    }
+    //GET inConfig value on <ESP_IP>/get?configForm=<inputMessage> and safe SPIFFS files
+    else if (request->hasParam(CE_EPM)) {
+      for (int i = 0; i < 4; i++) {
+
+        inputMessage = request->getParam(("CE" + (String)arr2[i]).c_str())->value();
+        writeFile(SPIFFS, ("/ce" + (String)arr[i] + ".txt").c_str(), inputMessage.c_str());
+  
+        inputMessage = request->getParam(("PS" + (String)arr2[i]).c_str())->value();
+        writeFile(SPIFFS, ("/ps" + (String)arr[i] + ".txt").c_str(), inputMessage.c_str());
+  
+        inputMessage = request->getParam(("API" + (String)arr2[i]).c_str())->value();
+        writeFile(SPIFFS, ("/api" + (String)arr[i] + ".txt").c_str(), inputMessage.c_str());
+      }
+            
+      for (int i = 0; i < 4; i++) {
+        writeConfig(arr[i]); 
+      }
     }
     else {
       inputMessage = "No message sent";
     }
-    Serial.println(inputMessage);
     request->send(200, "text/text", inputMessage);
   });
 
-  /*To get update of ADC Value only
-  server.on("/readADC", [] (AsyncWebServerRequest *request) {
-    if(!request->authenticate(http_username, http_password))
-      return request->requestAuthentication();
-    int a = analogRead(Analog_Pin);
-    String adcValue = String(a);
-    request->send(200, "text/plane", adcValue);
-  }); */
-  
   
   server.onNotFound(notFound);
   server.begin();
@@ -332,9 +460,8 @@ void loop(void){
     counter++;
   }
   
-  //To access your stored values on inCommand, inInit
-  readFile(SPIFFS, "/inCommand.txt");
-  readFile(SPIFFS, "/logP.txt");
+  //To access your stored values 
+  // readFile(SPIFFS, "/configEPM.txt");
 
   delay(10000);
 }
