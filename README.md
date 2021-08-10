@@ -7,8 +7,9 @@ Adrian:
 - Module setter for request frequency (in sec)
 
 Immi:
-- function to solve and safe received SPI package
+
 - function for workload (On/Off time of a high/low Pin)
+- receiveData for many arguments
 
 Not so important:
 - next to command line choose module configuration (easier command handling)
@@ -44,3 +45,4 @@ Not so important:
     - XML to show lastCommand and lastInit
     - Safe Init to SPIFFS
     - command line without refresh
+    - function to solve and safe received SPI package
