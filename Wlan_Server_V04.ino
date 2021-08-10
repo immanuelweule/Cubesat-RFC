@@ -36,11 +36,13 @@
 #include <analogWrite.h>
 #include <TimeLib.h>
 
+#include <ESP32DMASPIMaster.h>
+
 //Set WiFi SSID and password
 // const char* ssid = "Kewwin_02"; //WiFi SSID
 // const char* password = "2214934027604276"; //WiFi password
-const char* ssid = "Apartment 322"; //WiFi SSID
-const char* password = "06456469822825645048"; //WiFi password
+//const char* ssid = "Apartment 322"; //WiFi SSID
+//const char* password = "06456469822825645048"; //WiFi password
 
 const char* http_username = "admin";  // username for login
 const char* http_password = "admin";  // password for login
@@ -88,7 +90,19 @@ AsyncWebServer server(80);  //Setup a HTTP server
 #include <Adafruit_BMP280.h>
 Adafruit_BMP280 bmp; //I2C sensor connection of BMP280 modul
 
+ESP32DMASPI::Master master;
 
+static const uint32_t BUFFER_SIZE = 8;
+const int MCU_Av = 17;  //Set to Pin number, which will be used for MCU Availability
+uint8_t* spi_master_tx_buf;
+uint8_t* spi_master_rx_buf;
+uint8_t counterSpi=0;
+uint8_t transactionNbr=1;
+
+//Change length of array AND mcu_load_size, if mcu status should be tracked over a longer period of time
+uint8_t mcu_log[20];
+uint8_t mcu_log_size=20;  //Has to be equal to the size of the mcu_log array
+uint8_t mcu_load=0; //Shows load of MCU in percent
 
 //===============================================================
 // Function declarations
@@ -174,6 +188,113 @@ int determineConfig() {
   
   return config;
 }
+
+void spi(void) {
+    master.transfer(spi_master_tx_buf, spi_master_rx_buf, BUFFER_SIZE);
+  
+
+    printf("\nTransaction Nbr: %d", transactionNbr);
+    transactionNbr++;
+    
+    printf("\nReceived:");
+    //Show received data (if needed)
+    for (uint8_t i = 0; i < BUFFER_SIZE; ++i)
+        printf("%d ", spi_master_rx_buf[i]);
+    printf("\n");
+
+    printf("Transmitted:");
+    //Show transmitted data
+    for (uint8_t i = 0; i < BUFFER_SIZE; ++i)
+        printf("%d ", spi_master_tx_buf[i]);
+    printf("\n");
+
+    switch_Tx_Data(); //Only for test purposes to simulate different messages
+/*
+    //Dispense payload to correct function for further proceeding
+    if(spi_master_rx_buf[1]==ce_odc && spi_master_rx_buf[2]==ps_epm)  //epm
+    {
+      epm();  //tbd
+    }else if(spi_master_rx_buf[1]==ce_epm && spi_master_rx_buf[2]==ps_odc)  //odc
+    {
+      odc();  //tbd
+    }else if(spi_master_rx_buf[1]==ce_tms && spi_master_rx_buf[2]==ps_tms)  //tms
+    {
+      tms();  //tbd
+    }else if(spi_master_rx_buf[1]==ce_pay && spi_master_rx_buf[2]==ps_pay)  //pay
+    {
+      pay();  //tbd
+    }else{
+      Serial.println("Error, no module with PS %d and ComEn %d connected.", spi_master_rx_buf[1], spi_master_rx_buf[2]);
+    }
+*/
+
+}
+
+uint8_t mcuLoad(uint8_t actualStatus){
+  //Shift array one byte to the right
+  for(int c=mcu_log_size; c>0; c--){
+    mcu_log[c]=mcu_log[c-1];
+  }
+  
+  mcu_log[0]=actualStatus;
+  
+  mcu_load=0;
+  
+  for(int c=0; c<20; c++){
+    mcu_load+=mcu_log[c];
+  }
+
+  return mcu_load=mcu_load*100/mcu_log_size;
+}
+
+void switch_Tx_Data()
+{
+  switch (counterSpi)
+  {
+    case 0:
+    spi_master_tx_buf[0]=0;
+    spi_master_tx_buf[1]=0;
+    spi_master_tx_buf[2]=0;
+    spi_master_tx_buf[3]=1;
+    spi_master_tx_buf[4]=0;
+    spi_master_tx_buf[5]=0;
+    spi_master_tx_buf[6]=0;
+    spi_master_tx_buf[7]=1;
+    counterSpi++;
+    break;
+    case 1:
+    spi_master_tx_buf[0]=1;
+    spi_master_tx_buf[1]=0;
+    spi_master_tx_buf[2]=2;
+    spi_master_tx_buf[3]=4;
+    spi_master_tx_buf[4]=1;
+    spi_master_tx_buf[5]=0;
+    spi_master_tx_buf[6]=2;
+    spi_master_tx_buf[7]=4;
+    counterSpi=0;
+    break;
+    default:
+    spi_master_tx_buf[0]=7;
+    spi_master_tx_buf[1]=7;
+    spi_master_tx_buf[2]=7;
+    spi_master_tx_buf[3]=7;
+    spi_master_tx_buf[4]=7;
+    spi_master_tx_buf[5]=7;
+    spi_master_tx_buf[6]=7;
+    spi_master_tx_buf[7]=7;
+    counterSpi=0;
+    
+  }
+}
+
+void set_buffer() {
+    for (uint32_t i = 0; i < BUFFER_SIZE; i++) {
+        spi_master_tx_buf[i] = i & 0xFF;
+    }
+    memset(spi_master_rx_buf, 0, BUFFER_SIZE);
+}
+
+
 
 //===============================================================
 // Test Functions
@@ -271,6 +392,25 @@ void setup(void){
 
   ConnectToWiFi();
 
+  spi_master_tx_buf = master.allocDMABuffer(BUFFER_SIZE);
+  spi_master_rx_buf = master.allocDMABuffer(BUFFER_SIZE);
+
+  for(int c=0; c<mcu_log_size; c++)
+  {
+    mcu_log[c]=0;
+  }
+
+  set_buffer();
+  pinMode(MCU_Av, INPUT);    
+  delay(5000);
+  master.setDataMode(SPI_MODE3);
+  master.setFrequency(1000000);
+  master.setMaxTransferSize(BUFFER_SIZE);
+  master.setDMAChannel(2);  // 1 or 2 only
+  master.setQueueSize(1);   // transaction queue size
+    
+  master.begin();  // default SPI is HSPI
+  
   if(!MDNS.begin("cubesat")) {  //Argument of MDNS.begin holds website name (".local" has to be added)
      Serial.println("Error starting mDNS");
      return;
@@ -443,14 +583,14 @@ void setup(void){
 
 
 
-//===============================================================ç
+//===============================================================
 // Loop
 //===============================================================
 
 void loop(void){
 
   //Check if ESP is still connected to WiFi and reconnect if connection was lost
-  if(counter>6) { //Dont check connection status in every loop (for better runtime)
+  if(counter>120) { //Dont check connection status in every loop (for better runtime)
     if (WiFi.status() != WL_CONNECTED) {
       Serial.println("WiFi not connected. Try to reconnect...");
       ConnectToWiFi();
@@ -460,8 +600,17 @@ void loop(void){
     counter++;
   }
   
+  //Only use SPI if MCU is available
+  if(digitalRead(MCU_Av)==0)  
+  {
+    spi();
+    //mcuStatusHistory(0);
+  }else{
+    //mcuStatusHistory(1);
+  }
+  
   //To access your stored values 
   // readFile(SPIFFS, "/configEPM.txt");
 
-  delay(10000);
+  delay(500);
 }
