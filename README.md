@@ -3,19 +3,17 @@
 <ins>To do:</ins>
 
 Adrian:
-- update workload
+- next to command line choose module configuration (easier command handling)
 - Module setter for request frequency (in sec)
 
 Immi:
-
-- function for workload (On/Off time of a high/low Pin)
-- receiveData for many arguments
+- testing String appending
+- Programmablaufplan
+- Präsentation
 
 Not so important:
-- next to command line choose module configuration (easier command handling)
 - Check after initialization if modules are working and show it in Tab "Modules"
 - Turn On/Off modules in "Modules" tab
-- Split files in Js, HTML, CSS
 - Clean up functions 
 - Clean up leftovers from testing
 
@@ -45,4 +43,7 @@ Not so important:
     - XML to show lastCommand and lastInit
     - Safe Init to SPIFFS
     - command line without refresh
-    - function to solve and safe received SPI package
+    - function to safe received SPI packages
+    - function to send data to website correctly
+    - update workload
+    - function for workload (On/Off time of a high/low Pin)
