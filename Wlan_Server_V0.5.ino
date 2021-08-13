@@ -110,10 +110,13 @@ uint8_t buff;
 uint8_t counterSpi=0;
 uint8_t transactionNbr=1;
 
+uint8_t asdf=0;
+
 //Change length of array AND mcu_load_size, if mcu status should be tracked over a longer period of time
 uint8_t mcu_log[20];
 uint8_t mcu_log_size=20;  //Has to be equal to the size of the mcu_log array
-uint8_t mcu_load=0; //Shows load of MCU in percent
+String mcu_load=""; //Load of MCU in percent
+uint8_t sum=0;
 
 String testData = "";
 
@@ -196,52 +199,35 @@ void sendCommand() {
   return;
 }
 
-String receiveData(String compareConfig, String dat) {
+String receiveData(String compareConfig, String data1, String data2, String data3, String data4) {
     if ( conf1 == compareConfig) {
-      testData = dat;
-      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf1: %s\n", dat, compareConfig, conf1);
+      // EPM
+      testData = data1;
+
+      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf1: %s\n", data1, compareConfig, conf1);
       return conf1;
     } else if (conf2 == compareConfig) {
-      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf2: %s\n", dat, compareConfig, conf2);
+      // ODC
 
+      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf2: %s\n", data1, compareConfig, conf2);
       return conf2;
     } else if (conf3 == compareConfig) {
-      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf3: %s\n", dat, compareConfig, conf3);
+      //TMS
 
+      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf3: %s\n", data1, compareConfig, conf3);
       return conf3;
     } else if (conf4 == compareConfig) {
-      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf4: %s\n", dat, compareConfig, conf4);
+      //PAY
 
+      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf4: %s\n", data1, compareConfig, conf4);
       return conf4;
     }else{
-      printf("\nHat nicht funktioniert.\ndat: %s\ncompareConfig: %s\n", dat, compareConfig);
+      printf("\nHat nicht funktioniert.\ndat: %s\ncompareConfig: %s\n", data1, compareConfig);
     }
 }
+
 void spi(void) {
     master.transfer(spi_master_tx_buf, spi_master_rx_buf, BUFFER_SIZE);
-
-    /*switch(asdf){
-      case 0:
-      spiAddress="11";
-      spiPayload="50";
-      asdf++;
-      break;
-      case 1:
-      spiAddress="22";
-      spiPayload="100";
-      asdf++;
-      break;
-      case 2:
-      spiAddress="33";
-      spiPayload="150";
-      asdf++;
-      break;
-      case 3:
-      spiAddress="44";
-      spiPayload="200";
-      asdf=0;
-      break;      
-    }*/
 
     spiLength=spi_master_rx_buf[0];
     spiAddress=String(spi_master_rx_buf[1]);
@@ -254,6 +240,29 @@ void spi(void) {
     spiAddress="11";
     //spiPayload="200";
 
+    //switch spiPayload 
+    switch(asdf){
+      case 0:
+      //spiAddress="11";
+      spiPayload="50";
+      asdf++;
+      break;
+      case 1:
+      //spiAddress="22";
+      spiPayload="100";
+      asdf++;
+      break;
+      case 2:
+      //spiAddress="33";
+      spiPayload="150";
+      asdf++;
+      break;
+      case 3:
+      //spiAddress="44";
+      spiPayload="200";
+      asdf=0;
+      break;      
+    }
 
     printf("\nTransaction Nbr: %d", transactionNbr);
     transactionNbr++;
@@ -296,21 +305,20 @@ void spi(void) {
 
 }
 
-uint8_t mcuLoad(uint8_t actualStatus){
-  //Shift array one byte to the right
+void mcuLoad(uint8_t actualStatus){
+  
+  //Shift array one byte to the right, so a new value can be added to the array
   for(int c=mcu_log_size; c>0; c--){
     mcu_log[c]=mcu_log[c-1];
   }
   
-  mcu_log[0]=actualStatus;
-  
-  mcu_load=0;
-  
+  mcu_log[0]=actualStatus;  //First element is most recent status
+    
   for(int c=0; c<20; c++){
-    mcu_load+=mcu_log[c];
+    sum+=mcu_log[c];
   }
 
-  return mcu_load=mcu_load*100/mcu_log_size;
+  mcu_load=String(sum*100/mcu_log_size);
 }
 
 void switchTxData()
@@ -677,13 +685,13 @@ void loop(void){
   if(digitalRead(MCU_Av)==0)  
   {
     spi();
-    //mcuStatusHistory(0);
+    mcuLoad(0);
   }else{
-    //mcuStatusHistory(1);
+    mcuLoad(1);
   }
   
   //To access your stored values 
   // readFile(SPIFFS, "/configEPM.txt");
 
-  delay(3000);
+  delay(5000);
 }
