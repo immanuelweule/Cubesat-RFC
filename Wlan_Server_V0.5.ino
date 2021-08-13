@@ -35,14 +35,15 @@
 #include <ESPmDNS.h>  //For URL/name instead of IP address
 #include <analogWrite.h>
 #include <TimeLib.h>
+#include <string.h>
 
 #include <ESP32DMASPIMaster.h>
 
 //Set WiFi SSID and password
 // const char* ssid = "Kewwin_02"; //WiFi SSID
 // const char* password = "2214934027604276"; //WiFi password
-//const char* ssid = "Apartment 322"; //WiFi SSID
-//const char* password = "06456469822825645048"; //WiFi password
+// const char* ssid = "Apartment 322"; //WiFi SSID
+// const char* password = "06456469822825645048"; //WiFi password
 
 const char* http_username = "admin";  // username for login
 const char* http_password = "admin";  // password for login
@@ -104,7 +105,10 @@ uint8_t* spi_master_rx_buf;
 uint8_t spiLength=0;  //First (spi_master_rx_buf[0]) byte of spi message
 String spiAddress; //Second (...[1]) and third (...[2]) byte 
 uint8_t spiNextPack=0; //Fourth (...[3]) byte
-String spiPayload; //Fifth (...[4]) to penultimate (...[4+spiLength]) byte
+String spiPayload1; //Fifth (...[4]) to sixth (...[5]) byte
+String spiPayload2; //Fifth (...[6]) to sixth (...[5]) byte
+String spiPayload3; //Fifth (...[8]) to sixth (...[5]) byte
+String spiPayload4; //Fifth (...[9]) to sixth (...[5]) byte
 uint8_t spiCRC=0; //Last (...[4+spiLength+1]) byte
 uint8_t buff;
 uint8_t counterSpi=0;
@@ -226,40 +230,51 @@ String receiveData(String compareConfig, String data1, String data2, String data
     }
 }
 
-void spi(void) {
+void spi(void){
     master.transfer(spi_master_tx_buf, spi_master_rx_buf, BUFFER_SIZE);
 
     spiLength=spi_master_rx_buf[0];
     spiAddress=String(spi_master_rx_buf[1]);
     spiNextPack=spi_master_rx_buf[2];
 
-    spiPayload=String(spi_master_rx_buf[3]);
+    spiPayload1=String(spi_master_rx_buf[3]);
+    spiPayload1+=String(spi_master_rx_buf[4]);
+    
+    
+    spiPayload2=String(spi_master_rx_buf[5]);
+    spiPayload2+=String(spi_master_rx_buf[6]);
+    
+    spiPayload3=String(spi_master_rx_buf[7]);
+    spiPayload3+=String(spi_master_rx_buf[8]);
+    
+    spiPayload4=String(spi_master_rx_buf[9]);
+    spiPayload4+=String(spi_master_rx_buf[10]);
 
     spiCRC=spi_master_rx_buf[2+spiLength+1];
 
     spiAddress="11";
     //spiPayload="200";
 
-    //switch spiPayload 
+    //switch spiPayload
     switch(asdf){
       case 0:
       //spiAddress="11";
-      spiPayload="50";
+      spiPayload1="50";
       asdf++;
       break;
       case 1:
       //spiAddress="22";
-      spiPayload="100";
+      spiPayload1="100";
       asdf++;
       break;
       case 2:
       //spiAddress="33";
-      spiPayload="150";
+      spiPayload1="150";
       asdf++;
       break;
       case 3:
       //spiAddress="44";
-      spiPayload="200";
+      spiPayload1="200";
       asdf=0;
       break;      
     }
@@ -279,9 +294,9 @@ void spi(void) {
         printf("%d ", spi_master_tx_buf[i]);
     printf("\n");
 
-    printf("Payload: %s\nspiAddress: %s\n", spiPayload, spiAddress);
+    printf("Payload: %s\nspiAddress: %s\n", spiPayload1, spiAddress);
 
-    receiveData(spiAddress, spiPayload);
+    receiveData(spiAddress, spiPayload1, spiPayload2, spiPayload3, spiPayload4);
 
     switchTxData(); //Only for test purposes to simulate different messages
 /*
@@ -497,6 +512,9 @@ void setup(void){
     request->send(SPIFFS, "/index.html", String(), false);
   });
   
+  server.on("/workload", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", mcu_load.c_str());
+  });
   server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", readBMP280Temperature().c_str());
   });
