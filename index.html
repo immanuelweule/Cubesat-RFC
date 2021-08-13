@@ -11,6 +11,7 @@
     input[type=text]{ 
       text-align: left; 
       width: 50%;
+      caret-color: auto;
     }
     .terminal { 
       border-collapse: collapse;
@@ -147,7 +148,7 @@
             <br>
             <div style="border:2px solid;width:150px;margin-left:auto;margin-right:auto;padding: 10px;border-radius: 20px;">
             <h4>Workload:</h4>
-            <h5><span id="workload">50%</span></h5>
+            <h5><span id="workload">0</span>%</h5>
             </div>
           </div>
         </div>  
@@ -804,8 +805,8 @@
       },
       yAxis: {
         title: { text: '' },
-        min : 500,
-        max : 2000
+        min : 0,
+        max : 600
       },
       credits: { enabled: false }
     });
@@ -820,16 +821,30 @@
           var x = (new Date()).getTime() - (new Date().getTimezoneOffset()*60*1000),
               y = parseFloat(this.responseText);
           //console.log(this.responseText);
-          if(chartPh.series[0].data.length > 40) {
-            chartP.series[0].addPoint([x, y], true, true, true);
+          if(chartTe.series[0].data.length > 40) {
+            chartTe.series[0].addPoint([x, y], true, true, true);
           } else {
-            chartP.series[0].addPoint([x, y], true, false, true);
+            chartTe.series[0].addPoint([x, y], true, false, true);
           }
         }
       };
       xhttp.open("GET", "/test", true);
       xhttp.send();
     }, 3000 ) ;
+
+    // Workload call 
+    setInterval(function ( ) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("workload").innerHTML =
+            this.responseText;
+        }
+      };
+      xhttp.open("GET", "/workload", true);
+      xhttp.send();
+    }, 5000 ) ;
+
     
     window.onload = function exampleFunction() {
         submitMessage();
