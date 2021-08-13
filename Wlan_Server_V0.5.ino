@@ -41,8 +41,8 @@
 //Set WiFi SSID and password
 // const char* ssid = "Kewwin_02"; //WiFi SSID
 // const char* password = "2214934027604276"; //WiFi password
-const char* ssid = "Apartment 322"; //WiFi SSID
-const char* password = "06456469822825645048"; //WiFi password
+//const char* ssid = "Apartment 322"; //WiFi SSID
+//const char* password = "06456469822825645048"; //WiFi password
 
 const char* http_username = "admin";  // username for login
 const char* http_password = "admin";  // password for login
@@ -76,6 +76,10 @@ char arr2[][4] = {
   "epm","odc","tms","pay"
 };
 
+String conf1 = "";
+String conf2 = "";
+String conf3 = "";
+String conf4 = "";
 
 int numLog = 0; // numerator for log file
 int counter=0;  //Counter for checking connection status in loop
@@ -193,38 +197,63 @@ void sendCommand() {
 }
 
 String receiveData(String compareConfig, String dat) {
-    String conf1 = readFile(SPIFFS, ("/config" + String(arr[0]) + ".txt").c_str());
-    String conf2 = readFile(SPIFFS, ("/config" + String(arr[1]) + ".txt").c_str());
-    String conf3 = readFile(SPIFFS, ("/config" + String(arr[2]) + ".txt").c_str());
-    String conf4 = readFile(SPIFFS, ("/config" + String(arr[3]) + ".txt").c_str());
-
     if ( conf1 == compareConfig) {
       testData = dat;
+      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf1: %s\n", dat, compareConfig, conf1);
       return conf1;
     } else if (conf2 == compareConfig) {
+      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf2: %s\n", dat, compareConfig, conf2);
 
       return conf2;
     } else if (conf3 == compareConfig) {
+      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf3: %s\n", dat, compareConfig, conf3);
 
       return conf3;
     } else if (conf4 == compareConfig) {
+      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf4: %s\n", dat, compareConfig, conf4);
 
       return conf4;
+    }else{
+      printf("\nHat nicht funktioniert.\ndat: %s\ncompareConfig: %s\n", dat, compareConfig);
     }
 }
-
 void spi(void) {
     master.transfer(spi_master_tx_buf, spi_master_rx_buf, BUFFER_SIZE);
 
+    /*switch(asdf){
+      case 0:
+      spiAddress="11";
+      spiPayload="50";
+      asdf++;
+      break;
+      case 1:
+      spiAddress="22";
+      spiPayload="100";
+      asdf++;
+      break;
+      case 2:
+      spiAddress="33";
+      spiPayload="150";
+      asdf++;
+      break;
+      case 3:
+      spiAddress="44";
+      spiPayload="200";
+      asdf=0;
+      break;      
+    }*/
+
     spiLength=spi_master_rx_buf[0];
-    spiAddress=String(spi_master_rx_buf[1]*10+spi_master_rx_buf[2]);
-    spiNextPack=spi_master_rx_buf[3];
+    spiAddress=String(spi_master_rx_buf[1]);
+    spiNextPack=spi_master_rx_buf[2];
 
-    spiPayload=String(spi_master_rx_buf[5]);
+    spiPayload=String(spi_master_rx_buf[3]);
 
-    spiCRC=spi_master_rx_buf[4+spiLength+1];
+    spiCRC=spi_master_rx_buf[2+spiLength+1];
 
-    receiveData(spiAddress, spiPayload);
+    spiAddress="11";
+    //spiPayload="200";
+
 
     printf("\nTransaction Nbr: %d", transactionNbr);
     transactionNbr++;
@@ -241,7 +270,11 @@ void spi(void) {
         printf("%d ", spi_master_tx_buf[i]);
     printf("\n");
 
-    switch_Tx_Data(); //Only for test purposes to simulate different messages
+    printf("Payload: %s\nspiAddress: %s\n", spiPayload, spiAddress);
+
+    receiveData(spiAddress, spiPayload);
+
+    switchTxData(); //Only for test purposes to simulate different messages
 /*
     //Dispense payload to correct function for further proceeding
     if(spi_master_rx_buf[1]==ce_odc && spi_master_rx_buf[2]==ps_epm)  //epm
@@ -280,7 +313,7 @@ uint8_t mcuLoad(uint8_t actualStatus){
   return mcu_load=mcu_load*100/mcu_log_size;
 }
 
-void switch_Tx_Data()
+void switchTxData()
 {
   switch (counterSpi)
   {
@@ -605,6 +638,10 @@ void setup(void){
       for (int i = 0; i < 4; i++) {
         writeConfig(arr[i]); 
       }
+      conf1 = readFile(SPIFFS, ("/config" + String(arr[0]) + ".txt").c_str());
+      conf2 = readFile(SPIFFS, ("/config" + String(arr[1]) + ".txt").c_str());
+      conf3 = readFile(SPIFFS, ("/config" + String(arr[2]) + ".txt").c_str());
+      conf4 = readFile(SPIFFS, ("/config" + String(arr[3]) + ".txt").c_str());
     }
     else {
       inputMessage = "No message sent";
@@ -648,5 +685,5 @@ void loop(void){
   //To access your stored values 
   // readFile(SPIFFS, "/configEPM.txt");
 
-  delay(500);
+  delay(3000);
 }
