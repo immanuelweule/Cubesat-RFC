@@ -40,10 +40,10 @@
 #include <ESP32DMASPIMaster.h>
 
 //Set WiFi SSID and password
-// const char* ssid = "Kewwin_02"; //WiFi SSID
-// const char* password = "2214934027604276"; //WiFi password
-// const char* ssid = "Apartment 322"; //WiFi SSID
-// const char* password = "06456469822825645048"; //WiFi password
+const char* ssid = "Kewwin_02"; //WiFi SSID
+const char* password = "2214934027604276"; //WiFi password
+//const char* ssid = "Apartment 322"; //WiFi SSID
+//const char* password = "06456469822825645048"; //WiFi password
 
 const char* http_username = "admin";  // username for login
 const char* http_password = "admin";  // password for login
@@ -68,6 +68,10 @@ const char* API_EPM = "APIepm";
 const char* API_ODC = "APIodc";
 const char* API_TMS = "APItms";
 const char* API_PAY = "APIpay";
+
+const char* header1 = "Log File Temperature\n";
+const char* header2 = "Log File Altitude\n";
+const char* header3 = "Log File Pressure\n";
 
 //String Array of modules for easier handling
 char arr[][4] = {
@@ -99,7 +103,7 @@ ESP32DMASPI::Master master;
 
 static const uint32_t BUFFER_SIZE = 8;
 const int MCU_Av = 17;  //Set to Pin number, which will be used for MCU Availability
-uint8_t* spi_master_tx_buf;
+uint8_t* spi_master_tx_buf;  //Declared in spi()
 uint8_t* spi_master_rx_buf;
 
 uint8_t spiLength=0;  //First (spi_master_rx_buf[0]) byte of spi message
@@ -113,14 +117,13 @@ uint8_t spiCRC=0; //Last (...[4+spiLength+1]) byte
 uint8_t buff;
 uint8_t counterSpi=0;
 uint8_t transactionNbr=1;
-
+uint8_t sum=0;
 uint8_t asdf=0;
 
 //Change length of array AND mcu_load_size, if mcu status should be tracked over a longer period of time
 uint8_t mcu_log[20];
 uint8_t mcu_log_size=20;  //Has to be equal to the size of the mcu_log array
 String mcu_load=""; //Load of MCU in percent
-uint8_t sum=0;
 
 String testData = "";
 
@@ -208,25 +211,25 @@ String receiveData(String compareConfig, String data1, String data2, String data
       // EPM
       testData = data1;
 
-      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf1: %s\n", data1, compareConfig, conf1);
+      //printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf1: %s\n", data1, compareConfig, conf1);
       return conf1;
     } else if (conf2 == compareConfig) {
       // ODC
 
-      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf2: %s\n", data1, compareConfig, conf2);
+      //printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf2: %s\n", data1, compareConfig, conf2);
       return conf2;
     } else if (conf3 == compareConfig) {
       //TMS
 
-      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf3: %s\n", data1, compareConfig, conf3);
+      //printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf3: %s\n", data1, compareConfig, conf3);
       return conf3;
     } else if (conf4 == compareConfig) {
       //PAY
 
-      printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf4: %s\n", data1, compareConfig, conf4);
+      //printf("\nHat funktioniert.\ndat: %s\ncompareConfig: %s\nconf4: %s\n", data1, compareConfig, conf4);
       return conf4;
     }else{
-      printf("\nHat nicht funktioniert.\ndat: %s\ncompareConfig: %s\n", data1, compareConfig);
+      //printf("\nHat nicht funktioniert.\ndat: %s\ncompareConfig: %s\n", data1, compareConfig);
     }
 }
 
@@ -237,9 +240,10 @@ void spi(void){
     spiAddress=String(spi_master_rx_buf[1]);
     spiNextPack=spi_master_rx_buf[2];
 
+
+    //Abfrage von welchem Teilnehmer evtl. schon beim Aufteilen, da Sensoren von unterschiedlichen Modulen unterschiedlich viele Bytes benötigen könnten
     spiPayload1=String(spi_master_rx_buf[3]);
     spiPayload1+=String(spi_master_rx_buf[4]);
-    
     
     spiPayload2=String(spi_master_rx_buf[5]);
     spiPayload2+=String(spi_master_rx_buf[6]);
@@ -251,6 +255,8 @@ void spi(void){
     spiPayload4+=String(spi_master_rx_buf[10]);
 
     spiCRC=spi_master_rx_buf[2+spiLength+1];
+
+    //Serial.println("\nspiPayload1:%s\nspiPayload2:%s\nspiPayload3:%s\nspiPayload4:%s\n", spiPayload1, spiPayload2, spiPayload3, spiPayload4);
 
     spiAddress="11";
     //spiPayload="200";
@@ -320,8 +326,10 @@ void spi(void){
 
 }
 
+
+
 void mcuLoad(uint8_t actualStatus){
-  
+  sum=0;
   //Shift array one byte to the right, so a new value can be added to the array
   for(int c=mcu_log_size; c>0; c--){
     mcu_log[c]=mcu_log[c-1];
@@ -334,7 +342,14 @@ void mcuLoad(uint8_t actualStatus){
   }
 
   mcu_load=String(sum*100/mcu_log_size);
+
+  //printf("\n sum:%d mcuLoad: %s\n", mcu_load);    //phne diese Zeile funktioniert der code, mit ihr nicht (nochmal prüfen)
+
+  printf("\n mcuLoad: %s\n", mcu_load);
+
 }
+
+
 
 void switchTxData()
 {
@@ -400,7 +415,7 @@ String readBMP280Temperature() {
     return "";
   }
   else {
-    File f = SPIFFS.open("/logA.txt", "a");
+    File f = SPIFFS.open("/logT.txt", "a");
     time_t t = now();
     f.printf("Value %d : %.2f C   (%d:%d:%d)\n", numLog, temp, hour(t), minute(t), second(t));
     f.close();
@@ -461,9 +476,6 @@ void setup(void){
   }
   
   // Header for SPIFFS Files
-  const char* header1 = "Log File Temperature\n";
-  const char* header2 = "Log File Altitude\n";
-  const char* header3 = "Log File Pressure\n";
   writeFile(SPIFFS, "/logT.txt", header1);
   writeFile(SPIFFS, "/logA.txt", header2);
   writeFile(SPIFFS, "/logP.txt", header3);
@@ -484,11 +496,6 @@ void setup(void){
   spi_master_tx_buf = master.allocDMABuffer(BUFFER_SIZE);
   spi_master_rx_buf = master.allocDMABuffer(BUFFER_SIZE);
 
-  for(int c=0; c<mcu_log_size; c++)
-  {
-    mcu_log[c]=0;
-  }
-
   set_buffer();
   pinMode(MCU_Av, INPUT);    
   delay(5000);
@@ -499,6 +506,11 @@ void setup(void){
   master.setQueueSize(1);   // transaction queue size
     
   master.begin();  // default SPI is HSPI
+
+  for(int c=0; c<mcu_log_size; c++)
+  {
+    mcu_log[c]=0;
+  }
   
   if(!MDNS.begin("cubesat")) {  //Argument of MDNS.begin holds website name (".local" has to be added)
      Serial.println("Error starting mDNS");
@@ -512,9 +524,6 @@ void setup(void){
     request->send(SPIFFS, "/index.html", String(), false);
   });
   
-  server.on("/workload", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/plain", mcu_load.c_str());
-  });
   server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", readBMP280Temperature().c_str());
   });
