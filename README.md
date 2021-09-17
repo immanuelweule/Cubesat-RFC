@@ -33,17 +33,19 @@ Not so important:
     <ins>New:</ins>
     - buttons to download Log files
     - pack command line
+    - Build config files for checking incoming comm
     - pack safed Init
     - command line terminal style with last sends
-    - Simplified Value checks in js (with arrays)
-    - Simplified Config Safe (with arrays)
-    - Build config files for checking incoming comm
     - Refresh of Config on webpage after restart
     - Config file stays after restart
     - XML to show lastCommand and lastInit
     - Safe Init to SPIFFS
     - command line without refresh
-    - function to safe received SPI packages
     - function to send data to website correctly
+    - Simplified Value checks in js (with arrays)
+    - Simplified Config Safe (with arrays)
+
+
+    - function to safe received SPI packages
     - update workload
     - function for workload (On/Off time of a high/low Pin)
