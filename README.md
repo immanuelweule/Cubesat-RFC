@@ -46,6 +46,10 @@ Not so important:
     - Simplified Config Safe (with arrays)
 
     <ins>Immi:</ins>
+    - Präsentation
+    - Programmablaufplan
     - function to safe received SPI packages
     - update workload
     - function for workload (On/Off time of a high/low Pin)
+    - soldered 2 ESP boards and MCU
+    - functioning upload of Code to soldered ESP board
