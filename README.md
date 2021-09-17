@@ -45,7 +45,7 @@ Not so important:
     - Simplified Value checks in js (with arrays)
     - Simplified Config Safe (with arrays)
 
-
+    <ins>Immi:</ins>
     - function to safe received SPI packages
     - update workload
     - function for workload (On/Off time of a high/low Pin)
