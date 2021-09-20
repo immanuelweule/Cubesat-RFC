@@ -89,7 +89,7 @@ String TMS1 = "50";
 String TMS2 = "100";
 String TMS3 = "200"; 
 String TMS4 = "300";
-String ODC1, ODC2, ODC3, ODC4;
+String ODC1, ODC2, ODC3, ODC4, ODC5, ODC6, ODC7;
 String PAY1, PAY2, PAY3, PAY4;
 
 
@@ -559,12 +559,29 @@ void setup(void){
     request->send_P(200, "text/plain", readBMP280Altitude().c_str());
   });
   
-  server.on("/odcValue1", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/epmValue3", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", readBMP280Pressure().c_str());
   });
+  
   server.on("/odcValue2", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/plain", testData.c_str());
+    request->send_P(200, "text/plain", ODC2.c_str());
   });
+  server.on("/odcValue2", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", ODC3.c_str());
+  });
+  server.on("/odcValue2", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", ODC4.c_str());
+  });
+  server.on("/odcValue2", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", ODC5.c_str());
+  });
+  server.on("/odcValue2", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", ODC6.c_str());
+  });
+  server.on("/odcValue2", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", ODC7.c_str());
+  });
+  
   
   // Test purpose TMS
   server.on("/tmsValue1", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -740,7 +757,7 @@ void loop(void){
   }else{
     mcuLoad(1);
   }
-  
+  Serial.println("1");
   //To access your stored values 
   // readFile(SPIFFS, "/configEPM.txt");
 
