@@ -45,6 +45,25 @@
     width: 60%;
     font-size:14pt;
     } 
+    
+    * {
+    box-sizing: border-box;
+    }
+
+    /* Create three equal columns that floats next to each other */
+    .column2 {
+      float: left;
+      width: 33.33%;
+      padding: 10px;
+      height: 100px; /* Should be removed. Only for demonstration */
+    }
+
+    /* Clear floats after the columns */
+    .row2:after {
+      content: "";
+      display: table;
+      clear: both;
+}
         
   </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -146,9 +165,24 @@
               </tbody>
             </table>
             <br>
+            <div class="row2">
+              <div class="column2">
+                <h4>ComEn Lines:</h4>
+                <div class="span badge" id="All_EN_stat">Error</div>
+              </div>
+              <div class="column2">
+                <h4>PS Lines:</h4>
+                <div class="span badge" id="All_PS_stat">Error</div>
+              </div>
+              <div class="column2">
+                <h4>Status:</h4>
+                <div class="span badge" id="All_stat">Error</div>
+              </div>
+            </div>
+            <br>
             <div style="border:2px solid;width:150px;margin-left:auto;margin-right:auto;padding: 10px;border-radius: 20px;">
-            <h4>Workload:</h4>
-            <h5><span id="workload">0</span>%</h5>
+              <h4>Workload:</h4>
+              <h5><span id="workload">0</span>%</h5>
             </div>
           </div>
         </div>  
@@ -188,6 +222,13 @@
                   <td><span id="Time2">00:00</span></td>
                   <td><a href='/download2'><button style="color:black;">Download</button></a></td>
                 </tr>
+                <tr>
+                  <td>Pressure</td>
+                  <td><span id="epmValue3">0</span></td>
+                  <td>hPa</td>
+                  <td><span id="Time3">00:00</span></td>
+                  <td><a href='/download3'><button style="color:black;">Download</button></a></td>
+                <tr>
               </tbody>
               </table>
             <br>
@@ -209,18 +250,53 @@
               </thead>
               <tbody >
                 <tr>
-                  <td>Pressure</td>
+                  <td>Lage x</td>
                   <td><span id="odcValue1">0</span></td>
-                  <td>hPa</td>
-                  <td><span id="Time3">00:00</span></td>
-                  <td><a href='/download3'><button style="color:black;">Download</button></a></td>
-                <tr>
-                </tr>
-                  <td>Test</td>
-                  <td><span id="odcValue2">0</span></td>
-                  <td></td>
+                  <td>norm.</td>
                   <td><span id="Time4">00:00</span></td>
                   <td><a href='/download4'><button style="color:black;">Download</button></a></td>
+                </tr>
+                <tr>
+                  <td>Lage y</td>
+                  <td><span id="odcValue2">0</span></td>
+                  <td>norm.</td>
+                  <td><span id="Time5">00:00</span></td>
+                  <td><a href='/download5'><button style="color:black;">Download</button></a></td>
+                </tr>
+                <tr>
+                  <td>Lage z</td>
+                  <td><span id="odcValue3">0</span></td>
+                  <td>norm.</td>
+                  <td><span id="Time6">00:00</span></td>
+                  <td><a href='/download6'><button style="color:black;">Download</button></a></td>
+                </tr>
+                <tr>
+                  <td>Speed x</td>
+                  <td><span id="odcValue4">0</span></td>
+                  <td>m/s</td>
+                  <td><span id="Time7">00:00</span></td>
+                  <td><a href='/download7'><button style="color:black;">Download</button></a></td>
+                </tr>
+                <tr>
+                  <td>Speed y</td>
+                  <td><span id="odcValue5">0</span></td>
+                  <td>m/s</td>
+                  <td><span id="Time8">00:00</span></td>
+                  <td><a href='/download8'><button style="color:black;">Download</button></a></td>
+                </tr>
+                <tr>
+                  <td>Speed z</td>
+                  <td><span id="odcValue6">0</span></td>
+                  <td>m/s</td>
+                  <td><span id="Time9">00:00</span></td>
+                  <td><a href='/download9'><button style="color:black;">Download</button></a></td>
+                </tr>
+                <tr>
+                  <td>Temperature</td>
+                  <td><span id="odcValue7">0</span></td>
+                  <td>Celsius</td>
+                  <td><span id="Time10">00:00</span></td>
+                  <td><a href='/download10'><button style="color:black;">Download</button></a></td>
                 </tr>
               </tbody>
               </table>
@@ -246,29 +322,29 @@
                     <td>Value 1</td>
                     <td><span id="tmsValue1">0</span></td>
                     <td></td>
-                    <td><span id="Time5">00:00</span></td>
-                    <td><a href='/download5'><button style="color:black;">Download</button></a></td>
+                    <td><span id="Time11">00:00</span></td>
+                    <td><a href='/download11'><button style="color:black;">Download</button></a></td>
                   </tr>
                   <tr>
                     <td>Value 2</td>
                     <td><span id="tmsValue2">0</span></td>
                     <td></td>
-                    <td><span id="Time6">00:00</span></td>
-                    <td><a href='/download6'><button style="color:black;">Download</button></a></td>
+                    <td><span id="Time12">00:00</span></td>
+                    <td><a href='/download12'><button style="color:black;">Download</button></a></td>
                   </tr>
                   <tr>
                     <td>Value 3</td>
                     <td><span id="tmsValue3">0</span></td>
                     <td></td>
-                    <td><span id="Time7">00:00</span></td>
-                    <td><a href='/download7'><button style="color:black;">Download</button></a></td>
+                    <td><span id="Time13">00:00</span></td>
+                    <td><a href='/download13'><button style="color:black;">Download</button></a></td>
                   </tr>
                   <tr>
                     <td>Value 4</td>
                     <td><span id="tmsValue4">0</span></td>
                     <td></td>
-                    <td><span id="Time8">00:00</span></td>
-                    <td><a href='/download8'><button style="color:black;">Download</button></a></td>
+                    <td><span id="Time14">00:00</span></td>
+                    <td><a href='/download14'><button style="color:black;">Download</button></a></td>
                   </tr>
                 </tbody>
               </table>
@@ -530,7 +606,6 @@
 
     <div class="row" style="position:absolute; bottom:5px; width:100%">
         <div>
-          <img style="vertical-align:middle" src="https://wiwi.uni-giessen.de/ep_file/fb02/show/2642/411/JLU-Logo-Symbol-gro_.png" width="60" height="60">
           <span><a href="https://www.uni-giessen.de/studium/studienangebot/master/ptra">JLU Giessen PTRA</a></span>
         </div>
     </div>
@@ -786,7 +861,7 @@
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("odcValue1").innerHTML =
+          document.getElementById("epmValue3").innerHTML =
             this.responseText;
           var dt = new Date();
           document.getElementById("Time3").innerHTML = dt.toLocaleString();
@@ -799,7 +874,7 @@
           }
         }
       };
-      xhttp.open("GET", "/odcValue1", true);
+      xhttp.open("GET", "/epmValue3", true);
       xhttp.send();
     }, 20000 ) ;
 
@@ -834,7 +909,7 @@
           document.getElementById("tmsValue1").innerHTML =
             this.responseText;
           var dt = new Date();
-          document.getElementById("Time4").innerHTML = dt.toLocaleString();
+          document.getElementById("").innerHTML = dt.toLocaleString();
           var x = (new Date()).getTime() - (new Date().getTimezoneOffset()*60*1000),
               y = parseFloat(this.responseText);
           //console.log(this.responseText);
@@ -867,10 +942,10 @@
     setInterval(function ( ) {
       
       var dt = new Date();
-      document.getElementById("Time5").innerHTML = dt.toLocaleString();
-      document.getElementById("Time6").innerHTML = dt.toLocaleString();
-      document.getElementById("Time7").innerHTML = dt.toLocaleString();
-      document.getElementById("Time8").innerHTML = dt.toLocaleString();
+      document.getElementById("Time11").innerHTML = dt.toLocaleString();
+      document.getElementById("Time12").innerHTML = dt.toLocaleString();
+      document.getElementById("Time13").innerHTML = dt.toLocaleString();
+      document.getElementById("Time14").innerHTML = dt.toLocaleString();
       
       for (let i = 2; i < 3; i++) {
         var xhttp = new XMLHttpRequest();
