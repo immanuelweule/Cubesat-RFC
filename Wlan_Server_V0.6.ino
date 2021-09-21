@@ -110,22 +110,26 @@ ESP32DMASPI::Master master;
 
 static const uint32_t BUFFER_SIZE = 8;
 const int MCU_Av = 17;  //Set to Pin number, which will be used for MCU Availability
-uint8_t* spi_master_tx_buf;
+//uint8_t* spi_master_tx_buf; //Is declared in funtion "spi(...)" as parameter
 uint8_t* spi_master_rx_buf;
 
 uint8_t spiLength=0;  //First (spi_master_rx_buf[0]) byte of spi message
 String spiAddress; //Second (...[1]) and third (...[2]) byte 
 uint8_t spiNextPack=0; //Fourth (...[3]) byte
 String spiPayload1; //Fifth (...[4]) to sixth (...[5]) byte
-String spiPayload2; //Fifth (...[6]) to sixth (...[5]) byte
-String spiPayload3; //Fifth (...[8]) to sixth (...[5]) byte
-String spiPayload4; //Fifth (...[9]) to sixth (...[5]) byte
+String spiPayload2;
+String spiPayload3;
+String spiPayload4;
+String spiPayload5;
+String spiPayload6;
+String spiPayload7;
+String spiPayload8;
 uint8_t spiCRC=0; //Last (...[4+spiLength+1]) byte
 uint8_t buff;
 uint8_t counterSpi=0;
 uint8_t transactionNbr=1;
 
-uint8_t asdf=0;
+uint8_t t_switch_payload=0;
 
 //Change length of array AND mcu_load_size, if mcu status should be tracked over a longer period of time
 uint8_t mcu_log[20];
@@ -261,7 +265,7 @@ String receiveData(String compareConfig, String data1, String data2, String data
     }
 }
 
-void spi(void){
+void spi(int* spi_master_tx_buf){
     master.transfer(spi_master_tx_buf, spi_master_rx_buf, BUFFER_SIZE);
 
     spiLength=spi_master_rx_buf[0];
@@ -271,7 +275,6 @@ void spi(void){
     spiPayload1=String(spi_master_rx_buf[3]);
     spiPayload1+=String(spi_master_rx_buf[4]);
     
-    
     spiPayload2=String(spi_master_rx_buf[5]);
     spiPayload2+=String(spi_master_rx_buf[6]);
     
@@ -280,6 +283,18 @@ void spi(void){
     
     spiPayload4=String(spi_master_rx_buf[9]);
     spiPayload4+=String(spi_master_rx_buf[10]);
+    
+    spiPayload5=String(spi_master_rx_buf[11]);
+    spiPayload5+=String(spi_master_rx_buf[12]);
+    
+    spiPayload6=String(spi_master_rx_buf[13]);
+    spiPayload6+=String(spi_master_rx_buf[14]);
+    
+    spiPayload7=String(spi_master_rx_buf[15]);
+    spiPayload7+=String(spi_master_rx_buf[16]);
+    
+    spiPayload8=String(spi_master_rx_buf[17]);
+    spiPayload8+=String(spi_master_rx_buf[18]);
 
     spiCRC=spi_master_rx_buf[2+spiLength+1];
 
@@ -287,26 +302,26 @@ void spi(void){
     //spiPayload="200";
 
     //switch spiPayload
-    switch(asdf){
+    switch(t_switch_payload){
       case 0:
       //spiAddress="11";
       spiPayload1="50";
-      asdf++;
+      t_switch_payload++;
       break;
       case 1:
       //spiAddress="22";
       spiPayload1="100";
-      asdf++;
+      t_switch_payload++;
       break;
       case 2:
       //spiAddress="33";
       spiPayload1="150";
-      asdf++;
+      t_switch_payload++;
       break;
       case 3:
       //spiAddress="44";
       spiPayload1="200";
-      asdf=0;
+      t_switch_payload=0;
       break;      
     }
 
@@ -327,9 +342,9 @@ void spi(void){
 
     printf("Payload: %s\nspiAddress: %s\n", spiPayload1, spiAddress);
 
-    receiveData(spiAddress, spiPayload1, spiPayload2, spiPayload3, spiPayload4);
+    receiveData(spiAddress, spiPayload1, spiPayload2, spiPayload3, spiPayload4, spiPayload5, spiPayload6, spiPayload7, spiPayload8);
 
-    switchTxData(); //Only for test purposes to simulate different messages
+    t_switchTxData(); //Only for test purposes to simulate different messages
 /*
     //Dispense payload to correct function for further proceeding
     if(spi_master_rx_buf[1]==ce_odc && spi_master_rx_buf[2]==ps_epm)  //epm
@@ -372,7 +387,7 @@ void mcuLoad(uint8_t actualStatus){
 
 }
 
-void switchTxData()
+void t_switchTxData()
 {
   switch (counterSpi)
   {
