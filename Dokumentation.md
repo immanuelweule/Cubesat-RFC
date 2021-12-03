@@ -1,4 +1,4 @@
-### Dokumentation/Zusammenfassung von Kommunikation mit MCU
+# Dokumentation/Zusammenfassung von Kommunikation mit MCU
 
 ## SPI RFC-MCU Übersicht:
 - MCU Master
@@ -7,7 +7,7 @@
 - Am Anfang Frequenzen für Module senden
 
 ## Datenpakete:
-# Standard:
+### Standard:
 1. LEN
 2. NP (4 bit) + Protokoll (3 bit) + ADC-Flag (1 bit)
 3. PS (4 bit) + ComEn (4 bit)
@@ -16,7 +16,7 @@
    DataN
    (CRC)
         
-# Sonderpakete:
+### Sonderpakete:
 1 Null
 2 LEN
 3 Metainfo (ASCII Char.) (1)
