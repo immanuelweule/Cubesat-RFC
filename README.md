@@ -10,9 +10,6 @@ Adrian:
 
 Immi:
 - Send and receive function for every module!
-- testing String appending
-- Programmablaufplan
-- Präsentation
 
 Not so important:
 - Check after initialization if modules are working and show it in Tab "Modules"
