@@ -14,7 +14,7 @@
 4. Data0
    ...
    DataN
-   (CRC)
+5. (CRC)
         
 ### Sonderpakete:
 1. Null
@@ -22,10 +22,10 @@
 3. Metainfo (ASCII Char.) (1)
 4. String (ASCII String)
    ...
-   (CRC)
+5. (CRC)
         
         
-(1) 
+(1): 
 - R = Restart (kein String)
 - E = Error (String optional)
 - I = Intervallmessung setzen (String: Tabellenplatz | Periode (1-255 bzw. 100ms - 25,5s) | String (Standardpaket))
