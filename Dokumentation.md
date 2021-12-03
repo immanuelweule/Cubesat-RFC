@@ -1,20 +1,20 @@
 # Dokumentation/Zusammenfassung von Kommunikation mit MCU
 
-## SPI RFC-MCU Übersicht:
+## SPI RFC-MCU Übersicht
 - MCU Master
 - RFC Slave
 - In welchen Intervallen sendet die MCU am Anfang? Wie wird anfängliche Frequenz 
 - Am Anfang Frequenzen für Module senden
 
-## Datenpakete:
-### Standard:
+## Datenpakete
+### Standard
 1. LEN (a)
 2. NP (1 bit) + *Reserved* (3 bit) + ADC-Flag (1 bit) + Protokoll (3 bit) (b)
 3. PS (4 bit) + ComEn (4 bit)
 4. Data0 ... DataN
 5. (CRC)
 
-### Sonderpakete:
+### Sonderpakete
 1. Null
 2. LEN (a)
 3. Metainfo (ASCII Char.) (c)
