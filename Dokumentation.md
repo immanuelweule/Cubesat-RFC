@@ -21,8 +21,9 @@
 2. LEN
 3. Metainfo (ASCII Char.) (1)
 4. String (ASCII String)
-   ...
 5. (CRC)
+        
+        
         
         
 (1): 
@@ -30,5 +31,3 @@
 - E = Error (String optional)
 - I = Intervallmessung setzen (String: Tabellenplatz | Periode (1-255 bzw. 100ms - 25,5s) | String (Standardpaket))
 - S = Start (kein String)
-       
-      
