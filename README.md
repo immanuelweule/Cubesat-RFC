@@ -11,12 +11,19 @@ Adrian:
 Immi:
 - Send and receive function for every module!
 
+
+
+
+
 Not so important:
 - Check after initialization if modules are working and show it in Tab "Modules"
 - next to command line choose module configuration (easier command handling)
 - Turn On/Off modules in "Modules" tab
 - Clean up functions 
 - Clean up leftovers from testing
+
+
+
 
 <ins>Done:</ins>
 - Log files for sensordata with timestamp
