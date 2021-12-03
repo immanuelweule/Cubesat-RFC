@@ -26,7 +26,7 @@
         
         
         
-(1): 
+(1)
 - R = Restart (kein String)
 - E = Error (String optional)
 - I = Intervallmessung setzen (String: Tabellenplatz | Periode (1-255 bzw. 100ms - 25,5s) | String (Standardpaket))
