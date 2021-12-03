@@ -17,17 +17,18 @@
    (CRC)
         
 ### Sonderpakete:
-1 Null
-2 LEN
-3 Metainfo (ASCII Char.) (1)
-4 String (ASCII String)
-  ...
-  (CRC)
+1. Null
+2. LEN
+3. Metainfo (ASCII Char.) (1)
+4. String (ASCII String)
+   ...
+   (CRC)
         
         
-(1) - R = Restart (kein String)
-    - E = Error (String optional)
-    - I = Intervallmessung setzen (String: Tabellenplatz | Periode (1-255 bzw. 100ms - 25,5s) | String (Standardpaket))
-    - S = Start (kein String)
+(1) 
+- R = Restart (kein String)
+- E = Error (String optional)
+- I = Intervallmessung setzen (String: Tabellenplatz | Periode (1-255 bzw. 100ms - 25,5s) | String (Standardpaket))
+- S = Start (kein String)
        
       
